@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRIGHTNEWS — THE GAME, BEYOND THE SCORE</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>html.light{filter:invert(1) hue-rotate(180deg)}html.light img{filter:invert(1) hue-rotate(180deg)}</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+
+<header class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/90 border-b border-slate-800">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <div class="cursor-pointer" onclick="go('matches')">
+      <span class="text-xl font-black tracking-wider bg-gradient-to-r from-blue-500 via-cyan-400 to-white bg-clip-text text-transparent">BRIGHTNEWS</span>
+      <p class="text-[9px] uppercase tracking-widest text-blue-400 font-semibold">The game, beyond the score</p>
+    </div>
+    <nav class="flex gap-1 text-xs sm:text-sm font-bold overflow-x-auto"><button id="nav-home" onclick="go('home')" class="px-3 py-2 rounded-lg whitespace-nowrap">HOME</button><button id="nav-matches" onclick="go('matches')" class="px-3 py-2 rounded-lg whitespace-nowrap">MATCHES</button><button id="nav-standings" onclick="go('standings')" class="px-3 py-2 rounded-lg whitespace-nowrap">KLASEMEN</button><button id="nav-predictions" onclick="go('predictions')" class="px-3 py-2 rounded-lg whitespace-nowrap">PREDIKSI</button><button id="nav-record" onclick="go('record')" class="px-3 py-2 rounded-lg whitespace-nowrap">RECORD</button><button id="nav-kits" onclick="go('kits')" class="px-3 py-2 rounded-lg whitespace-nowrap">KITS</button><button id="nav-admin" onclick="go('admin')" class="px-3 py-2 rounded-lg whitespace-nowrap">ADMIN</button><button onclick="toggleTheme()" class="px-3 py-2 rounded-lg">🌓</button></nav>
+  </div>
+</header>
+
+<main id="app" class="max-w-6xl mx-auto px-4 py-8"></main>
+
+<footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+  &copy; 2026 BRIGHTNEWS MEDIA · Instagram & TikTok: @brightnewss
+</footer>
+
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COMPS = { PL:'Premier League', PD:'La Liga', SA:'Serie A', BL1:'Bundesliga', FL1:'Ligue 1', CL:'Champions League' };
+let S = { q:'', fq:0, league:'ALL', h2h:null, pos:null, view:'home', filter:'ALL', comp:'PL', matches:[], err:null, detailId:null, detail:null, detailErr:null, std:null };
+
+const kind = m => ['IN_PLAY','PAUSED'].includes(m.status) ? 'LIVE' : m.status === 'FINISHED' ? 'FT' : 'UP';
+const fmtTime = d => new Date(d).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+const fmtDate = d => new Date(d).toLocaleDateString([], { weekday:'short', day:'numeric', month:'short' });
+const crest = u => u ? `<img src="${esc(u)}" class="w-7 h-7 object-contain" alt="">` : '<span class="w-7 h-7"></span>';
+
+async function api(url) {
+  const r = await fetch(url);
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'HTTP ' + r.status);
+  return j;
+}
+
+// ============ MATCHES ============
+async function loadMatches() {
+  try { S.matches = (await api('/api/matches')).matches || []; S.err = null; }
+  catch (e) { S.err = e.message; }
+  if (['home','matches'].includes(S.view) && !S.detailId) render();
+}
+
+function badge(m) {
+  const k = kind(m);
+  if (k === 'LIVE') return '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 animate-pulse">● LIVE</span>';
+  if (k === 'FT') return '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">FT</span>';
+  return `<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">${fmtDate(m.utcDate)} · ${fmtTime(m.utcDate)}</span>`;
+}
+
+function card(m) {
+  const h = m.score?.fullTime?.home, a = m.score?.fullTime?.away;
+  const show = kind(m) !== 'UP';
+  return `<div onclick="openMatch(${m.id})" class="cursor-pointer p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500 hover:-translate-y-1 transition space-y-3 ${kind(m) === 'LIVE' ? 'ring-1 ring-red-500/60 shadow-lg shadow-red-500/10' : ''}">
+    <div class="flex justify-between items-center text-xs font-bold text-blue-400"><span class="truncate pr-2">${esc(m.competition?.name)}</span>${badge(m)}</div>
+    <div class="flex justify-between items-center font-bold text-sm"><div class="flex items-center gap-2">${crest(m.homeTeam.crest)}${star(m.homeTeam.id)}<span>${esc(m.homeTeam.shortName || m.homeTeam.name)}</span></div><span class="text-lg">${show ? (h ?? 0) : ''}</span></div>
+    <div class="flex justify-between items-center font-bold text-sm"><div class="flex items-center gap-2">${crest(m.awayTeam.crest)}${star(m.awayTeam.id)}<span>${esc(m.awayTeam.shortName || m.awayTeam.name)}</span></div><span class="text-lg">${show ? (a ?? 0) : ''}</span></div>
+  </div>`;
+}
+
+function section(title, list) {
+  if (!list.length) return '';
+  return `<h2 class="text-lg font-black mt-8 mb-3">${title} <span class="text-slate-500 text-sm">(${list.length})</span></h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${[...list].sort((a, b) => fv(b) - fv(a)).map(card).join('')}</div>`;
+}
+
+function vis() {
+  const q = S.q.trim().toLowerCase();
+  return S.matches.filter(m => (S.league === 'ALL' || m.competition?.name === S.league) &&
+    (!q || (m.homeTeam.name + ' ' + m.awayTeam.name).toLowerCase().includes(q)));
+}
+function viewMatches() {
+  const chips = [['ALL','Semua'],['LIVE','Live'],['UP','Akan Main'],['FT','Selesai']].map(([k, l]) =>
+    `<button onclick="S.filter='${k}';render()" class="px-4 py-2 rounded-full text-xs font-bold border ${S.filter === k ? 'bg-blue-600 border-blue-500' : 'bg-slate-900 border-slate-700 text-slate-300'}">${l}</button>`).join('');
+  let body;
+  if (S.err) body = `<p class="text-red-400 text-sm mt-6">Gagal ambil data: ${esc(S.err)}</p>`;
+  else if (!S.matches.length) body = '<p class="text-slate-400 text-sm mt-6">Belum ada pertandingan (atau data masih dimuat).</p>';
+  else {
+    const live = vis().filter(m => kind(m) === 'LIVE');
+    const up = vis().filter(m => kind(m) === 'UP').sort((x, y) => new Date(x.utcDate) - new Date(y.utcDate));
+    const ft = vis().filter(m => kind(m) === 'FT').sort((x, y) => new Date(y.utcDate) - new Date(x.utcDate));
+    const f = S.filter;
+    body = (f === 'ALL' || f === 'LIVE' ? section('🔴 Sedang Berlangsung', live) : '')
+         + (f === 'ALL' || f === 'UP' ? section('⏰ Akan Main', up) : '')
+         + (f === 'ALL' || f === 'FT' ? section('✅ Selesai', ft) : '');
+    if (!body) body = '<p class="text-slate-400 text-sm mt-6">Tidak ada pertandingan di kategori ini.</p>';
+  }
+  const cnt = k => S.matches.filter(m => kind(m) === k).length;
+  const stat = (n, l, c) => `<div class="flex-1 min-w-[90px] p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-center"><div class="text-3xl font-black ${c}">${n}</div><div class="text-[10px] uppercase tracking-widest text-slate-400">${l}</div></div>`;
+  const leagues = [...new Set(S.matches.map(m => m.competition?.name))].filter(Boolean);
+  const lchips = ['ALL', ...leagues].map(l => `<button onclick="S.league=this.dataset.l;render()" data-l="${esc(l)}" class="px-3 py-1.5 rounded-lg text-[11px] font-bold ${S.league === l ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">${l === 'ALL' ? 'Semua Liga' : esc(l)}</button>`).join('');
+  return `<section class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-blue-900 via-slate-900 to-slate-950 border border-slate-800">
+      <p class="text-xs font-bold tracking-widest text-cyan-400 uppercase">⚡ Live Matchday</p>
+      <h1 class="text-3xl sm:text-5xl font-black mt-1">Match Center</h1>
+      <p class="text-xs text-slate-400 mt-1">Refresh otomatis tiap 60 detik. Klik pertandingan untuk detail lengkap.</p>
+      <div class="flex gap-3 mt-5 flex-wrap">${stat(cnt('LIVE'), 'Live', 'text-red-400')}${stat(cnt('UP'), 'Akan main', 'text-blue-300')}${stat(cnt('FT'), 'Selesai', 'text-emerald-400')}</div>
+    </section>
+    <input id="q" value="${esc(S.q)}" oninput="S.q=this.value;S.fq=1;render()" placeholder="🔍 Cari tim..." class="w-full mt-5 p-3 rounded-xl bg-slate-900 border border-slate-700 text-sm">
+    <div class="flex gap-2 flex-wrap mt-4">${chips}</div>
+    <div class="flex gap-2 flex-wrap mt-3">${lchips}</div>${body}`;
+}
+
+// ============ DETAIL PERTANDINGAN ============
+async function openMatch(id) {
+  S.view = 'matches'; S.detailId = id; S.detail = null; S.detailErr = null; render(); window.scrollTo(0, 0);
+  await loadDetail();
+  loadExtras();
+}
+async function loadDetail() {
+  if (!S.detailId) return;
+  try { S.detail = await api('/api/match/' + S.detailId); S.detailErr = null; }
+  catch (e) { S.detailErr = e.message; }
+  if (S.detailId) render();
+}
+function closeMatch() { S.detailId = null; S.detail = null; render(); }
+
+function viewDetail() {
+  const back = '<button onclick="closeMatch()" class="mb-4 px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm font-bold text-blue-400">← Kembali</button>';
+  if (S.detailErr && !S.detail) return back + `<p class="text-red-400 text-sm">Gagal ambil detail: ${esc(S.detailErr)}</p>`;
+  const m = S.detail;
+  if (!m) return back + '<p class="text-slate-400 text-sm">Memuat...</p>';
+  const k = kind(m);
+  const ft = m.score?.fullTime || {}, ht = m.score?.halfTime || {};
+  const statusText = k === 'LIVE' ? '● LIVE' : k === 'FT' ? 'FULL TIME' : fmtDate(m.utcDate) + ' · ' + fmtTime(m.utcDate);
+  const team = t => `<div class="flex-1 text-center space-y-2"><img src="${esc(t.crest)}" class="w-20 h-20 mx-auto object-contain" alt=""><div class="font-bold">${esc(t.name)}</div></div>`;
+
+  const ev = [
+    ...(m.goals || []).map(g => ({ min: g.minute, inj: g.injuryTime, side: g.team?.id === m.homeTeam.id ? 'h' : 'a', icon: '⚽', text: (g.scorer?.name || 'Gol') + (g.assist?.name ? ` (assist: ${g.assist.name})` : '') })),
+    ...(m.bookings || []).map(b => ({ min: b.minute, side: b.team?.id === m.homeTeam.id ? 'h' : 'a', icon: b.card === 'RED' ? '🟥' : '🟨', text: b.player?.name || 'Kartu' })),
+    ...(m.substitutions || []).map(s => ({ min: s.minute, side: s.team?.id === m.homeTeam.id ? 'h' : 'a', icon: '🔄', text: `${s.playerIn?.name || '?'} ⬆ ${s.playerOut?.name || '?'} ⬇` }))
+  ].sort((x, y) => (x.min || 0) - (y.min || 0));
+
+  const evHtml = ev.length ? ev.map(e => `<div class="flex items-center gap-3 py-2 border-b border-slate-800 text-sm ${e.side === 'a' ? 'flex-row-reverse text-right' : ''}">
+      <span class="w-12 text-xs font-bold text-blue-400 ${e.side === 'a' ? 'text-left' : ''}">${e.min ?? ''}'${e.inj ? '+' + e.inj : ''}</span><span>${e.icon}</span><span>${esc(e.text)}</span></div>`).join('')
+    : '<p class="text-slate-400 text-sm">Belum ada event (gol/kartu) dari penyedia data untuk pertandingan ini.</p>';
+
+  const info = [
+    ['Kompetisi', m.competition?.name], ['Babak/Matchday', m.matchday ? 'Matchday ' + m.matchday : m.stage],
+    ['Stadion', m.venue], ['Wasit', (m.referees || [])[0]?.name], ['Skor babak pertama', ht.home != null ? `${ht.home} - ${ht.away}` : null]
+  ].filter(x => x[1]).map(([a, b]) => `<div class="flex justify-between py-2 border-b border-slate-800 text-sm"><span class="text-slate-400">${a}</span><span class="font-semibold text-right">${esc(b)}</span></div>`).join('');
+
+  return back + `
+  <div class="rounded-3xl p-6 sm:p-10 bg-gradient-to-b from-blue-950 to-slate-900 border border-slate-800">
+    <p class="text-center text-xs font-bold tracking-widest text-blue-400 uppercase">${esc(m.competition?.name)}</p>
+    <div class="flex items-center mt-6">
+      ${team(m.homeTeam)}
+      <div class="px-4 text-center">
+        <div class="text-5xl sm:text-6xl font-black">${k === 'UP' ? 'vs' : (ft.home ?? 0) + ' - ' + (ft.away ?? 0)}</div>
+        <div class="mt-2 text-xs font-bold ${k === 'LIVE' ? 'text-red-400 animate-pulse' : 'text-slate-300'}">${statusText}</div>
+      </div>
+      ${team(m.awayTeam)}
+    </div>
+  </div>
+  <div class="grid md:grid-cols-2 gap-4 mt-4">
+    <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-2">Match Events</h3>${evHtml}</div>
+    <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-2">Info Pertandingan</h3>${info || '<p class="text-slate-400 text-sm">Belum ada info.</p>'}</div>
+  </div>${extras(m)}`;
+}
+
+async function loadExtras() {
+  S.h2h = null; S.pos = null;
+  try { S.h2h = await api('/api/h2h/' + S.detailId); } catch (e) {}
+  try {
+    const c = S.detail?.competition?.code;
+    if (COMPS[c]) {
+      const d = await api('/api/standings/' + c);
+      const t = (d.standings.find(x => x.type === 'TOTAL') || {}).table || [];
+      S.pos = { h: t.find(r => r.team.id === S.detail.homeTeam.id), a: t.find(r => r.team.id === S.detail.awayTeam.id) };
+    }
+  } catch (e) {}
+  if (S.detailId) render();
+}
+function extras(m) {
+  let out = '';
+  const pc = (t, r) => r ? `<div class="flex-1 text-center p-4 rounded-xl bg-slate-950/60 border border-slate-800">${crest(t.crest)}<div class="text-xs font-bold mt-1">${esc(t.shortName || t.name)}</div><div class="text-3xl font-black text-blue-400">#${r.position}</div><div class="text-[10px] text-slate-400 uppercase">${r.points} pts · ${r.playedGames} main</div></div>` : '';
+  if (S.pos && (S.pos.h || S.pos.a)) out += `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">Posisi di Klasemen</h3><div class="flex gap-3 items-center">${pc(m.homeTeam, S.pos.h)}<span class="text-slate-500 font-bold">VS</span>${pc(m.awayTeam, S.pos.a)}</div></div>`;
+  const ag = S.h2h?.aggregates;
+  if (ag && ag.numberOfMatches) {
+    const hw = ag.homeTeam.id === m.homeTeam.id ? ag.homeTeam : ag.awayTeam, aw = hw === ag.homeTeam ? ag.awayTeam : ag.homeTeam;
+    const n = ag.numberOfMatches, pct = x => Math.round(x / n * 100);
+    const list = (S.h2h.matches || []).slice(0, 5).map(x => `<div class="flex justify-between text-xs py-1.5 border-b border-slate-800"><span class="text-slate-400">${fmtDate(x.utcDate)}</span><span>${esc(x.homeTeam.shortName || x.homeTeam.name)} <b>${x.score.fullTime.home}-${x.score.fullTime.away}</b> ${esc(x.awayTeam.shortName || x.awayTeam.name)}</span></div>`).join('');
+    out += `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">Head to Head <span class="text-slate-500 text-xs">(${n} pertemuan terakhir)</span></h3>
+      <div class="flex h-3 rounded-full overflow-hidden"><div class="bg-blue-500" style="width:${pct(hw.wins)}%"></div><div class="bg-slate-500" style="width:${pct(hw.draws)}%"></div><div class="bg-red-500" style="width:${pct(aw.wins)}%"></div></div>
+      <div class="flex justify-between text-xs mt-2 font-bold"><span class="text-blue-400">${esc(m.homeTeam.shortName || m.homeTeam.name)} ${hw.wins}M</span><span class="text-slate-400">Seri ${hw.draws}</span><span class="text-red-400">${aw.wins}M ${esc(m.awayTeam.shortName || m.awayTeam.name)}</span></div>
+      <div class="mt-3">${list}</div></div>`;
+  }
+  return out;
+}
+
+S.content = { predictions: [], news: [], kits: [] }; S.token = null; S.sc = null;
+try { S.fav = JSON.parse(localStorage.getItem('fav') || '[]'); } catch (e) { S.fav = []; }
+try { if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light'); } catch (e) {}
+const fv = m => (S.fav.includes(m.homeTeam.id) || S.fav.includes(m.awayTeam.id)) ? 1 : 0;
+function toggleFav(ev, id) { ev.stopPropagation(); S.fav = S.fav.includes(id) ? S.fav.filter(x => x !== id) : [...S.fav, id]; try { localStorage.setItem('fav', JSON.stringify(S.fav)); } catch (e) {} render(); }
+const star = id => `<button onclick="toggleFav(event,${id})" class="mr-1 ${S.fav.includes(id) ? 'text-yellow-400' : 'text-slate-600'}">★</button>`;
+function toggleTheme() { const l = document.documentElement.classList.toggle('light'); try { localStorage.setItem('theme', l ? 'light' : 'dark'); } catch (e) {} }
+async function loadContent() { try { S.content = await api('/api/content'); } catch (e) {} if (['home', 'predictions', 'record', 'kits'].includes(S.view) || (S.view === 'admin' && S.token)) render(); }
+
+const empty = t => `<p class="text-slate-400 text-sm mt-6">${t}</p>`;
+const resBadge = r => r === 'won' ? '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">MENANG</span>' : r === 'lost' ? '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400">KALAH</span>' : '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">PENDING</span>';
+const predCard = p => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><div class="flex justify-between text-xs font-bold text-blue-400"><span>${esc(p.competition)}</span>${resBadge(p.result)}</div><h3 class="font-bold text-lg">${esc(p.match)}</h3><p class="text-sm text-slate-300">Pick: <b>${esc(p.pick)}</b>${p.score ? ' · Skor ' + esc(p.score) : ''}</p></div>`;
+const newsCard = n => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-bold">${esc(n.title)}</h3><p class="text-sm text-slate-400 mt-2">${esc(n.text)}</p><p class="text-[10px] text-slate-500 mt-2">${fmtDate(n.date)}</p></div>`;
+const title = (h, sub) => `<h1 class="text-3xl font-black">${h}</h1><p class="text-xs text-slate-400 mb-4">${sub}</p>`;
+
+function viewHome() {
+  const c = S.content;
+  const up = S.matches.filter(m => kind(m) === 'UP').sort((x, y) => new Date(x.utcDate) - new Date(y.utcDate));
+  let feat = [...S.matches.filter(m => kind(m) === 'LIVE'), ...up].slice(0, 3);
+  if (!feat.length) feat = S.matches.filter(m => kind(m) === 'FT').slice(0, 3);
+  const news = [...c.news].reverse().slice(0, 3), preds = [...c.predictions].reverse().slice(0, 3);
+  return `<section class="rounded-3xl p-8 sm:p-12 bg-gradient-to-br from-blue-900 via-slate-900 to-slate-950 border border-slate-800">
+      <p class="text-xs font-bold tracking-widest text-cyan-400 uppercase">⚡ Football Culture</p>
+      <h1 class="text-4xl sm:text-6xl font-black mt-2 leading-none">THE GAME,<br>BEYOND THE SCORE</h1>
+      <button onclick="go('matches')" class="mt-6 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold">Buka Match Center</button></section>
+    <h2 class="text-lg font-black mt-8 mb-3">🔥 Match Unggulan</h2>
+    ${feat.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${feat.map(card).join('')}</div>` : empty('Belum ada match.')}
+    <h2 class="text-lg font-black mt-8 mb-3">🎯 Prediksi Terbaru</h2>
+    ${preds.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${preds.map(predCard).join('')}</div>` : empty('Belum ada prediksi.')}
+    <h2 class="text-lg font-black mt-8 mb-3">📰 Berita</h2>
+    ${news.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${news.map(newsCard).join('')}</div>` : empty('Belum ada berita. Tambah lewat Admin.')}`;
+}
+function viewPredictions() {
+  const l = [...S.content.predictions].reverse();
+  return title('Prediksi', 'Pilihan editorial BRIGHTNEWS.') + (l.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${l.map(predCard).join('')}</div>` : empty('Belum ada prediksi.'));
+}
+function viewRecord() {
+  const p = S.content.predictions, w = p.filter(x => x.result === 'won').length, l = p.filter(x => x.result === 'lost').length;
+  const box = (n, t, c) => `<div class="p-5 rounded-xl bg-slate-900 border border-slate-800 text-center"><div class="text-xs text-slate-400">${t}</div><div class="text-3xl font-black ${c}">${n}</div></div>`;
+  return title('Rekor Prediksi', 'Dihitung otomatis dari prediksi yang sudah ditandai Menang/Kalah di Admin.') +
+    `<div class="grid grid-cols-2 md:grid-cols-4 gap-4">${box(p.length, 'Total', '')}${box(w, 'Menang', 'text-emerald-400')}${box(l, 'Kalah', 'text-red-400')}${box(w + l ? Math.round(w / (w + l) * 100) + '%' : '-', 'Win Rate', 'text-blue-400')}</div>`;
+}
+function viewKits() {
+  const l = S.content.kits;
+  const link = k => /^https?:\/\//.test(k.link || '') ? `<a href="${esc(k.link)}" target="_blank" rel="noopener" class="inline-block mt-3 px-4 py-2 rounded-lg bg-blue-600 text-xs font-bold">Beli</a>` : '';
+  return title('BRIGHT KITS', 'Jersey dan apparel pilihan.') + (l.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${l.map(k => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-bold text-lg">${esc(k.name)}</h3><p class="text-sm text-slate-400 mt-1">${esc(k.desc)}</p><p class="font-black text-emerald-400 mt-2">${esc(k.price)}</p>${link(k)}</div>`).join('')}</div>` : empty('Belum ada produk.'));
+}
+function scorers() {
+  if (!S.sc || !S.sc.length) return '';
+  return `<h2 class="text-lg font-black mt-8 mb-3">⚽ Top Skor</h2><div class="rounded-2xl bg-slate-900 border border-slate-800 divide-y divide-slate-800">${S.sc.map((x, i) => `<div class="flex items-center gap-3 p-3 text-sm"><span class="w-5 text-slate-400">${i + 1}</span>${crest(x.team.crest)}<span class="flex-1 font-semibold">${esc(x.player.name)} <span class="text-slate-500 text-xs">${esc(x.team.shortName || x.team.name)}</span></span><b class="text-blue-400">${x.goals}</b></div>`).join('')}</div>`;
+}
+
+// ============ ADMIN ============
+const v = id => $(id).value;
+const inp = (id, ph) => `<input id="${id}" placeholder="${ph}" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm">`;
+const save = js => `<button onclick="${js}" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-bold">Simpan</button>`;
+const hdr = () => ({ 'Content-Type': 'application/json', 'x-token': S.token });
+function viewAdmin() {
+  if (!S.token) return `<div class="max-w-md mx-auto p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-4"><h1 class="text-2xl font-black text-center">Admin Login</h1>${inp('adm-user', 'Username')}<input id="adm-pass" type="password" placeholder="Password" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm"><button onclick="login()" class="w-full py-3 rounded-xl bg-blue-600 font-bold text-sm">Masuk</button></div>`;
+  const list = (t, arr, label) => [...arr].reverse().map(x => `<div class="flex justify-between items-center gap-2 py-2 border-b border-slate-800 text-sm"><span class="truncate">${esc(label(x))} ${t === 'predictions' ? resBadge(x.result) : ''}</span><span class="flex gap-3 shrink-0">${t === 'predictions' ? `<button onclick="setRes(${x.id},'won')" class="text-emerald-400 text-xs font-bold">Menang</button><button onclick="setRes(${x.id},'lost')" class="text-orange-400 text-xs font-bold">Kalah</button>` : ''}<button onclick="delItem('${t}',${x.id})" class="text-red-400 text-xs font-bold">Hapus</button></span></div>`).join('') || '<p class="text-xs text-slate-500">Kosong</p>';
+  const box = (t, b) => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><h3 class="font-black">${t}</h3>${b}</div>`;
+  const c = S.content;
+  return `<div class="flex justify-between items-center mb-4"><h1 class="text-3xl font-black">Admin Desk</h1><button onclick="S.token=null;render()" class="px-4 py-2 rounded-xl bg-red-600/20 text-red-400 text-xs font-bold">Logout</button></div>
+  <div class="grid md:grid-cols-3 gap-4">
+  ${box('Prediksi', inp('p-comp', 'Liga') + inp('p-match', 'Real Madrid vs Man City') + inp('p-pick', 'Pick, mis. Over 2.5') + inp('p-score', 'Skor, mis. 2-1') + save("addItem('predictions',{competition:v('p-comp'),match:v('p-match'),pick:v('p-pick'),score:v('p-score'),result:'pending'})") + list('predictions', c.predictions, x => x.match))}
+  ${box('Berita', inp('n-title', 'Judul') + inp('n-text', 'Isi singkat') + save("addItem('news',{title:v('n-title'),text:v('n-text')})") + list('news', c.news, x => x.title))}
+  ${box('Bright Kits', inp('k-name', 'Nama produk') + inp('k-desc', 'Deskripsi') + inp('k-price', 'Harga, mis. Rp350.000') + inp('k-link', 'Link beli (https://...)') + save("addItem('kits',{name:v('k-name'),desc:v('k-desc'),price:v('k-price'),link:v('k-link')})") + list('kits', c.kits, x => x.name))}
+  </div>`;
+}
+async function login() {
+  try {
+    const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: v('adm-user'), password: v('adm-pass') }) });
+    if (!r.ok) return alert('Username atau password salah');
+    S.token = (await r.json()).token; render();
+  } catch (e) { alert('Server tidak bisa dihubungi'); }
+}
+async function adm(url, method, body) {
+  const r = await fetch(url, { method, headers: hdr(), body: body ? JSON.stringify(body) : undefined });
+  if (!r.ok) return alert('Gagal. Coba login ulang.');
+  await loadContent(); render();
+}
+const addItem = (type, item) => adm('/api/content', 'POST', { type, item });
+const delItem = (t, id) => confirm('Hapus?') && adm(`/api/content/${t}/${id}`, 'DELETE');
+const setRes = (id, result) => adm('/api/content/predictions/' + id, 'PATCH', { result });
+
+// ============ KLASEMEN ============
+async function loadStandings() {
+  S.std = null; render();
+  try { S.std = await api('/api/standings/' + S.comp); }
+  catch (e) { S.std = { error: e.message }; }
+  try { S.sc = (await api('/api/scorers/' + S.comp)).scorers; } catch (e) { S.sc = []; }
+  if (S.view === 'standings') render();
+}
+function pickComp(c) { S.comp = c; loadStandings(); }
+
+function viewStandings() {
+  const chips = Object.entries(COMPS).map(([c, n]) =>
+    `<button onclick="pickComp('${c}')" class="px-4 py-2 rounded-full text-xs font-bold border ${S.comp === c ? 'bg-blue-600 border-blue-500' : 'bg-slate-900 border-slate-700 text-slate-300'}">${n}</button>`).join('');
+  let body = '<p class="text-slate-400 text-sm mt-6">Memuat klasemen...</p>';
+  if (S.std?.error) body = `<p class="text-red-400 text-sm mt-6">Gagal ambil klasemen: ${esc(S.std.error)}</p>`;
+  else if (S.std?.standings) {
+    const tables = S.std.standings.filter(s => s.type === 'TOTAL');
+    body = tables.map(t => `<div class="mt-6 rounded-2xl bg-slate-900 border border-slate-800 overflow-x-auto">
+      ${t.group ? `<div class="px-4 pt-4 text-xs font-bold text-blue-400">${esc(t.group.replace('_', ' '))}</div>` : ''}
+      <table class="w-full text-sm"><thead><tr class="text-xs text-slate-400 text-center"><th class="p-3">#</th><th class="p-3 text-left">Klub</th><th>M</th><th>W</th><th>D</th><th>L</th><th>GD</th><th class="pr-4">Pts</th></tr></thead><tbody>
+      ${t.table.map(r => `<tr class="border-t border-slate-800 text-center"><td class="p-3 text-slate-400">${r.position}</td>
+        <td class="p-3 text-left"><div class="flex items-center gap-2">${crest(r.team.crest)}<span class="font-semibold">${esc(r.team.shortName || r.team.name)}</span></div></td>
+        <td>${r.playedGames}</td><td>${r.won}</td><td>${r.draw}</td><td>${r.lost}</td><td>${r.goalDifference > 0 ? '+' : ''}${r.goalDifference}</td><td class="pr-4 font-black text-blue-400">${r.points}</td></tr>`).join('')}
+      </tbody></table></div>`).join('') || '<p class="text-slate-400 text-sm mt-6">Klasemen belum tersedia.</p>';
+  }
+  return `<h1 class="text-3xl font-black">Klasemen</h1><p class="text-xs text-slate-400 mb-4">Update otomatis dari data feed.</p><div class="flex gap-2 flex-wrap">${chips}</div>${body}${scorers()}`;
+}
+
+// ============ ADMIN ============
+const $0 = 0;
+const $ = id => document.getElementById(id);
+const $v = id => $(id).value;
+
+// ============ RENDER & NAVIGASI ============
+function render() {
+  setTimeout(() => { const qi = $('q'); if (S.fq && qi) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); S.fq = 0; } }, 0);
+  ['home','matches','standings','predictions','record','kits','admin'].forEach(v => {
+    $('nav-' + v).className = 'px-3 py-2 rounded-lg ' + (S.view === v ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800');
+  });
+  const V = { home: viewHome, matches: () => S.detailId ? viewDetail() : viewMatches(), standings: viewStandings, predictions: viewPredictions, record: viewRecord, kits: viewKits, admin: viewAdmin };
+  $('app').innerHTML = V[S.view]();
+}
+function go(v) {
+  S.view = v; S.detailId = null; render();
+  if (v === 'standings' && !S.std) loadStandings();
+}
+
+window.onload = () => {
+  render(); loadMatches(); loadContent();
+  setInterval(loadMatches, 60000);
+  setInterval(() => { if (S.view === 'matches' && S.detailId) loadDetail(); }, 30000);
+};
+</script>
+</body>
+</html>
