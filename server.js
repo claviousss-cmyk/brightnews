@@ -196,8 +196,8 @@ app.get('/api/af/match', async (req, res) => {
         if (!fx) return res.json({ available: false, reason: 'Pertandingan ini tidak ditemukan di API-Football' });
         const live = ['1H', 'HT', '2H', 'ET', 'BT', 'P', 'LIVE'].includes(fx.fixture.status.short);
         const ttl = live ? 60000 : 1800000;
-        const [st, ev] = await Promise.all([af('/fixtures/statistics?fixture=' + fx.fixture.id, ttl), af('/fixtures/events?fixture=' + fx.fixture.id, ttl)]);
-        res.json({ available: true, homeId: fx.teams.home.id, minute: fx.fixture.status.elapsed, statistics: st.response || [], events: ev.response || [] });
+        const [st, ev, lu] = await Promise.all([af('/fixtures/statistics?fixture=' + fx.fixture.id, ttl), af('/fixtures/events?fixture=' + fx.fixture.id, ttl), af('/fixtures/lineups?fixture=' + fx.fixture.id, ttl)]);
+        res.json({ available: true, homeId: fx.teams.home.id, minute: fx.fixture.status.elapsed, statistics: st.response || [], events: ev.response || [], lineups: lu.response || [] });
     } catch (e) { res.json({ available: false, reason: e.message }); }
 });
 
@@ -252,7 +252,7 @@ const store = {
         if (!TURSO) return fileDB();
         await init();
         const o = { predictions: [], news: [], kits: [] };
-        (await sql('SELECT id, type, data FROM items ORDER BY id')).forEach(([id, type, data]) => { (o[type] = o[type] || []).push({ ...JSON.parse(data), id: Number(id) }); });
+        (await sql("SELECT id, type, data FROM items WHERE type != 'fan' ORDER BY id")).forEach(([id, type, data]) => { (o[type] = o[type] || []).push({ ...JSON.parse(data), id: Number(id) }); });
         return o;
     },
     async add(type, item) {
@@ -274,12 +274,31 @@ const store = {
         return true;
     }
 };
+store.upd = async (type, id, item) => {
+    if (!TURSO) { const d = fileDB(); const p = (d[type] || []).find(x => String(x.id) === String(id)); if (!p) return false; Object.assign(p, item); saveFile(d); return true; }
+    await init();
+    const r = await sql('SELECT data FROM items WHERE id = ? AND type = ?', [Number(id), type]);
+    if (!r.length) return false;
+    await sql('UPDATE items SET data = ? WHERE id = ?', [JSON.stringify({ ...JSON.parse(r[0][0]), ...item }), Number(id)]);
+    return true;
+};
+store.get = async (type, id) => {
+    if (!TURSO) return (fileDB().fan || {})[id] || null;
+    await init();
+    const r = await sql('SELECT data FROM items WHERE id = ? AND type = ?', [Number(id), type]);
+    return r.length ? JSON.parse(r[0][0]) : null;
+};
+store.put = async (type, id, obj) => {
+    if (!TURSO) { const d = fileDB(); d.fan = d.fan || {}; d.fan[id] = obj; return saveFile(d); }
+    await init();
+    await sql('INSERT INTO items (id, type, data) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data', [Number(id), type, JSON.stringify(obj)]);
+};
 const auth = (req, res, next) => okToken(req.headers['x-token']) ? next() : res.status(401).json({ error: 'Unauthorized' });
 const clean = (o) => Object.fromEntries(Object.entries(o || {}).slice(0, 10).map(([k, v]) => [String(k).slice(0, 30), String(v).slice(0, 4000)]));
 const guard = (fn) => async (req, res) => { try { await fn(req, res); } catch (e) { res.status(500).json({ error: e.message }); } };
 
 app.get('/api/content', guard(async (req, res) => {
-    const d = await store.all();
+    const d = await store.all(); delete d.fan;
     if (!okToken(req.headers['x-token'])) d.predictions = (d.predictions || []).filter(p => p.published !== 'false');
     res.json(d);
 }));
@@ -289,17 +308,6 @@ app.post('/api/content', auth, guard(async (req, res) => {
     await store.add(type, { ...clean(item), date: new Date().toISOString() });
     res.json({ success: true });
 }));
-app.put('/api/content/:type/:id', auth, guard(async (req,res)=>{
-  const {type,id}=req.params;
-  const {item}=req.body;
-  const db=await store.all();
-  const row=(db[type]||[]).find(x=>String(x.id)===String(id));
-  if(!row) return res.status(404).json({error:'Not found'});
-  Object.assign(row,item||{});
-  saveFile(db);
-  res.json({success:true,row});
-}));
-
 app.delete('/api/content/:type/:id', auth, guard(async (req, res) => {
     if (!TYPES.includes(req.params.type)) return res.status(400).json({ error: 'Invalid type' });
     await store.del(req.params.type, req.params.id);
@@ -310,6 +318,30 @@ app.patch('/api/content/predictions/:id', auth, guard(async (req, res) => {
     if (result !== undefined && !['won', 'lost', 'void', 'pending'].includes(result)) return res.status(400).json({ error: 'Invalid' });
     const ok = await store.patch(req.params.id, (p) => { if (result !== undefined) p.result = result; if (published !== undefined) p.published = String(published); });
     res.status(ok ? 200 : 404).json({ success: ok });
+}));
+
+app.put('/api/content/:type/:id', auth, guard(async (req, res) => {
+    if (!TYPES.includes(req.params.type)) return res.status(400).json({ error: 'Invalid type' });
+    const ok = await store.upd(req.params.type, req.params.id, clean(req.body && req.body.item));
+    res.status(ok ? 200 : 404).json({ success: ok });
+}));
+
+// Fan Prediction (vote publik, 1 vote per IP per pertandingan)
+const votes = new Map();
+app.get('/api/fan/:id', guard(async (req, res) => {
+    if (!/^\d+$/.test(req.params.id)) return res.status(400).json({ error: 'Invalid' });
+    res.json((await store.get('fan', req.params.id)) || { home: 0, draw: 0, away: 0 });
+}));
+app.post('/api/fan/:id', guard(async (req, res) => {
+    const id = req.params.id, c = req.body && req.body.choice;
+    if (!/^\d+$/.test(id) || !['home', 'draw', 'away'].includes(c)) return res.status(400).json({ error: 'Invalid' });
+    const k = String(req.headers['x-forwarded-for'] || req.ip).split(',')[0] + ':' + id;
+    if (votes.has(k)) return res.status(429).json({ error: 'Already voted' });
+    votes.set(k, 1);
+    const cur = (await store.get('fan', id)) || { home: 0, draw: 0, away: 0 };
+    cur[c]++;
+    await store.put('fan', id, cur);
+    res.json(cur);
 }));
 
 // Cek kesehatan semua sumber data (hanya admin)
