@@ -130,11 +130,11 @@ app.get('/api/scorers/:code', wrap((req) => {
 }));
 
 // ---------- Konten admin (butuh login) ----------
-const TYPES = ['predictions', 'news', 'kits'];
+const TYPES = ['predictions', 'news', 'kits', 'featured', 'takes', 'transfers', 'players', 'facts'];
 const readDB = () => fs.existsSync(DB_PATH) ? JSON.parse(fs.readFileSync(DB_PATH, 'utf8')) : { predictions: [], news: [], kits: [] };
 const writeDB = (d) => { fs.mkdirSync(path.dirname(DB_PATH), { recursive: true }); fs.writeFileSync(DB_PATH, JSON.stringify(d, null, 2)); };
 const auth = (req, res, next) => tokens.has(req.headers['x-token']) ? next() : res.status(401).json({ error: 'Unauthorized' });
-const clean = (o) => Object.fromEntries(Object.entries(o || {}).slice(0, 10).map(([k, v]) => [String(k).slice(0, 30), String(v).slice(0, 1000)]));
+const clean = (o) => Object.fromEntries(Object.entries(o || {}).slice(0, 10).map(([k, v]) => [String(k).slice(0, 30), String(v).slice(0, 4000)]));
 
 app.post('/api/content', auth, (req, res) => {
     const { type, item } = req.body;
@@ -152,8 +152,11 @@ app.delete('/api/content/:type/:id', auth, (req, res) => {
 app.patch('/api/content/predictions/:id', auth, (req, res) => {
     const db = readDB();
     const p = (db.predictions || []).find(x => String(x.id) === req.params.id);
-    if (!p || !['won', 'lost', 'pending'].includes(req.body.result)) return res.status(400).json({ error: 'Salah' });
-    p.result = req.body.result; writeDB(db); res.json({ success: true });
+    if (!p) return res.status(400).json({ error: 'Not found' });
+    const { result, published } = req.body;
+    if (result !== undefined) { if (!['won', 'lost', 'void', 'pending'].includes(result)) return res.status(400).json({ error: 'Invalid' }); p.result = result; }
+    if (published !== undefined) p.published = String(published);
+    writeDB(db); res.json({ success: true });
 });
 
 app.listen(PORT, () => console.log(`BRIGHTNEWS jalan di http://localhost:${PORT}`));
