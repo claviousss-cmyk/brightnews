@@ -3,36 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<meta name="description" content="BRIGHTNEWS - live scores, match analysis, predictions and football culture. THE GAME, BEYOND THE SCORE.">
+<meta property="og:title" content="BRIGHTNEWS - THE GAME, BEYOND THE SCORE"><meta property="og:description" content="Live scores, match analysis, predictions and football culture."><meta property="og:type" content="website">
+<style>
+:root{--b:#0057B8;--bd:#003f87;--bl:#e8f1ff}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;background:linear-gradient(180deg,#eef5ff 0,#fff 480px)!important;color:#0b1f44!important;background-attachment:fixed}
+header{background:rgba(255,255,255,.9)!important;border-color:#dbe7fb!important;backdrop-filter:blur(10px)}
+.brandtxt{color:var(--b)}
+.bg-slate-900{background:#fff!important;box-shadow:0 1px 2px rgba(0,87,184,.06),0 10px 28px -14px rgba(0,87,184,.22)}
+.bg-slate-800{background:var(--bl)!important;color:#0b3a7a}
+.bg-slate-950\/60{background:#f1f6ff!important}
+.border-slate-800,.border-slate-700{border-color:#dbe7fb!important}
+.divide-slate-800>*+*{border-color:#e3edfc!important}
+.text-slate-100,.text-slate-200,.text-slate-300{color:#0b1f44!important}
+.text-slate-400,.text-slate-500{color:#5b7196!important}
+.text-blue-400,.text-cyan-400,.text-blue-300{color:var(--b)!important}
+.text-emerald-400{color:#059669!important}.text-red-400{color:#dc2626!important}.text-orange-400{color:#c2410c!important}.text-amber-300{color:#b45309!important}
+.bg-blue-600,.bg-cyan-400{background:var(--b)!important;color:#fff!important}
+.bg-blue-600:hover{background:var(--bd)!important}
+.bg-blue-500\/20{background:#e3efff!important}.bg-indigo-400{background:#a9c9f3!important}
+.text-slate-950{color:#fff!important}
+.hero-anim{position:relative;overflow:hidden;color:#fff!important;background-image:linear-gradient(125deg,#0057B8 0%,#0a4aa3 45%,#2a86ee 100%)!important;background-size:220% 220%;animation:gradMove 12s ease infinite}
+.hero-anim .text-slate-100,.hero-anim .text-slate-200,.hero-anim .text-slate-300,.hero-anim .text-slate-400,.hero-anim .text-blue-400,.hero-anim .text-cyan-400,.hero-anim .text-blue-300{color:#dbeaff!important}
+.hero-anim [class*="bg-slate-900"]{background:rgba(255,255,255,.15)!important;box-shadow:none}
+html.night body{background:radial-gradient(1000px 520px at 8% -10%,#0057B8 0,transparent 60%),#06142e!important;color:#eaf2ff!important}
+html.night header{background:rgba(6,20,46,.9)!important;border-color:rgba(120,170,255,.2)!important}
+html.night .brandtxt{color:#7db8ff}
+html.night .bg-slate-900{background:rgba(0,87,184,.22)!important;box-shadow:none}
+html.night .bg-slate-800{background:rgba(0,87,184,.38)!important;color:#eaf2ff}
+html.night .bg-slate-950\/60{background:rgba(0,20,60,.5)!important}
+html.night .border-slate-800,html.night .border-slate-700{border-color:rgba(120,170,255,.25)!important}
+html.night .text-slate-100,html.night .text-slate-200,html.night .text-slate-300{color:#eaf2ff!important}
+html.night .text-slate-400,html.night .text-slate-500{color:#9db8e3!important}
+html.night .text-blue-400,html.night .text-cyan-400,html.night .text-blue-300{color:#7db8ff!important}
+html.night .bg-blue-500\/20{background:rgba(0,87,184,.35)!important}
+#app h2{display:flex;align-items:center;gap:10px}#app h2::before{content:"";width:4px;height:1.1em;background:var(--b);border-radius:2px}
+.ico{display:inline-block;vertical-align:middle}.ico.g{width:14px;height:14px;border-radius:50%;background:var(--b);border:2px solid #fff;box-shadow:0 0 0 1px var(--b)}.ico.y,.ico.r{width:10px;height:14px;border-radius:2px;background:#facc15}.ico.r{background:#ef4444}
+.livebadge::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#ef4444;margin-right:6px;animation:blink 1s infinite}
+.soc{display:inline-flex;width:42px;height:42px;border-radius:50%;align-items:center;justify-content:center;background:var(--bl);color:var(--b);transition:.25s}.soc:hover{background:var(--b);color:#fff;transform:translateY(-3px)}
+.orbit{position:absolute;right:-90px;top:-90px;width:520px;max-width:85%;pointer-events:none}.orbit g{transform-box:view-box;transform-origin:200px 200px}
+.o1{animation:spin 26s linear infinite}.o2{animation:spin 38s linear infinite reverse}.o3{animation:spin 60s linear infinite}.core{animation:corep 4s ease-in-out infinite;transform-origin:200px 200px;transform-box:view-box}
+.ticker{overflow:hidden;margin-top:14px;border-radius:14px;background:var(--b);color:#fff;padding:11px 0}.tk-in{display:flex;width:max-content;animation:marquee 45s linear infinite}.ticker:hover .tk-in{animation-play-state:paused}.tk{padding:0 28px;font-size:12px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.3)}
+.rise{opacity:0;transform:translateY(26px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:var(--d,0s)}
+.noanim .rise{animation:none;opacity:1;transform:none}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}.reveal.in{opacity:1;transform:none}
+.sheen{position:relative;overflow:hidden}.sheen::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(0,87,184,.25),transparent);animation:sheen 3.2s ease-in-out infinite}
+#app:not(.noanim)>section,#app:not(.noanim)>div:not(.reveal):not(.grid){animation:fadeUp .6s ease both}
+#app:not(.noanim) .hero-anim{animation:fadeUp .6s ease both,gradMove 12s ease infinite}
+#app:not(.noanim) :not(.reveal)>.grid>div{animation:fadeUp .55s ease both}
+#app:not(.noanim) :not(.reveal)>.grid>div:nth-child(3n+2){animation-delay:.07s}#app:not(.noanim) :not(.reveal)>.grid>div:nth-child(3n){animation-delay:.14s}
+.grid>div{transition:transform .25s,box-shadow .25s}.grid>div:hover{transform:translateY(-4px);box-shadow:0 16px 36px -14px rgba(0,87,184,.45)}
+.ring-red-500\/60{animation:livepulse 1.8s infinite}
+.bar{animation:grow .9s ease both}
+button{transition:all .2s}button:hover{transform:translateY(-1px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes gradMove{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes livepulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 9px rgba(239,68,68,0)}}
+@keyframes grow{from{width:0}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes blink{50%{opacity:.25}}
+@keyframes marquee{to{transform:translateX(-50%)}}@keyframes sheen{0%{left:-60%}60%,100%{left:130%}}@keyframes corep{50%{transform:scale(1.25)}}
+</style>
+
 <title>BRIGHTNEWS — THE GAME, BEYOND THE SCORE</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>html.light{filter:invert(1) hue-rotate(180deg)}html.light img{filter:invert(1) hue-rotate(180deg)}</style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
 
 <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/90 border-b border-slate-800">
   <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
     <div class="cursor-pointer" onclick="go('matches')">
-      <span class="text-xl font-black tracking-wider bg-gradient-to-r from-blue-500 via-cyan-400 to-white bg-clip-text text-transparent">BRIGHTNEWS</span>
+      <span class="text-xl font-black tracking-wider brandtxt">BRIGHTNEWS</span>
       <p class="text-[9px] uppercase tracking-widest text-blue-400 font-semibold">The game, beyond the score</p>
     </div>
-    <nav class="flex gap-1 text-xs sm:text-sm font-bold overflow-x-auto"><button id="nav-home" onclick="go('home')" class="px-3 py-2 rounded-lg whitespace-nowrap">HOME</button><button id="nav-matches" onclick="go('matches')" class="px-3 py-2 rounded-lg whitespace-nowrap">MATCHES</button><button id="nav-standings" onclick="go('standings')" class="px-3 py-2 rounded-lg whitespace-nowrap">KLASEMEN</button><button id="nav-predictions" onclick="go('predictions')" class="px-3 py-2 rounded-lg whitespace-nowrap">PREDIKSI</button><button id="nav-record" onclick="go('record')" class="px-3 py-2 rounded-lg whitespace-nowrap">RECORD</button><button id="nav-kits" onclick="go('kits')" class="px-3 py-2 rounded-lg whitespace-nowrap">KITS</button><button id="nav-admin" onclick="go('admin')" class="px-3 py-2 rounded-lg whitespace-nowrap">ADMIN</button><button onclick="toggleTheme()" class="px-3 py-2 rounded-lg">🌓</button></nav>
+    <nav class="flex gap-1 text-xs sm:text-sm font-bold overflow-x-auto"><button id="nav-home" onclick="go('home')" class="px-3 py-2 rounded-lg whitespace-nowrap">HOME</button><button id="nav-matches" onclick="go('matches')" class="px-3 py-2 rounded-lg whitespace-nowrap">MATCHES</button><button id="nav-standings" onclick="go('standings')" class="px-3 py-2 rounded-lg whitespace-nowrap">STANDINGS</button><button id="nav-predictions" onclick="go('predictions')" class="px-3 py-2 rounded-lg whitespace-nowrap">PREDICTIONS</button><button id="nav-record" onclick="go('record')" class="px-3 py-2 rounded-lg whitespace-nowrap">RECORD</button><button id="nav-kits" onclick="go('kits')" class="px-3 py-2 rounded-lg whitespace-nowrap">BRIGHT KITS</button><button id="nav-admin" onclick="go('admin')" class="px-3 py-2 rounded-lg whitespace-nowrap">ADMIN</button><button onclick="toggleTheme()" class="px-3 py-2 rounded-lg" aria-label="Toggle theme"><svg viewBox="0 0 20 20" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M10 3a7 7 0 000 14z" fill="currentColor"/></svg></button></nav>
   </div>
 </header>
 
 <main id="app" class="max-w-6xl mx-auto px-4 py-8"></main>
 
-<footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-  &copy; 2026 BRIGHTNEWS MEDIA · Instagram & TikTok: @brightnewss
-</footer>
+<footer class="border-t border-slate-800 py-10 text-center text-xs text-slate-500"><div class="flex justify-center gap-3 mb-4"><a class="soc" href="https://instagram.com/brightnewss" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a class="soc" href="https://www.tiktok.com/@brightnewss" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M16.6 3c.3 2.3 1.7 3.8 4 3.9v3.1c-1.5 0-2.9-.5-4-1.2v6.2c0 3.2-2.6 5.5-5.6 5.5S5.4 18.2 5.4 15.2c0-3.3 2.8-5.8 6.2-5.4v3.2c-1.7-.4-3 .7-3 2.2 0 1.3 1 2.3 2.3 2.3s2.4-1 2.4-2.5V3z"/></svg></a></div><p>&copy; 2026 BRIGHTNEWS MEDIA &middot; THE GAME, BEYOND THE SCORE &middot; @brightnewss</p></footer>
 
 <script>
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const COMPS = { PL:'Premier League', PD:'La Liga', SA:'Serie A', BL1:'Bundesliga', FL1:'Ligue 1', CL:'Champions League' };
+const COMPS = { PL:'Premier League', PD:'La Liga', SA:'Drawe A', BL1:'Bundesliga', FL1:'Ligue 1', CL:'Champions League' };
 let S = { q:'', fq:0, league:'ALL', h2h:null, pos:null, view:'home', filter:'ALL', comp:'PL', matches:[], err:null, detailId:null, detail:null, detailErr:null, std:null };
 
-const kind = m => ['IN_PLAY','PAUSED'].includes(m.status) ? 'LIVE' : m.status === 'FINISHED' ? 'FT' : 'UP';
-const fmtTime = d => new Date(d).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-const fmtDate = d => new Date(d).toLocaleDateString([], { weekday:'short', day:'numeric', month:'short' });
+const kind = m => ['IN_PLAY','PAUSED'].includes(m.status) ? 'LIVE' : m.status === 'FINISHED' ? 'FT' : (['POSTPONED','CANCELLED','SUSPENDED','AWARDED'].includes(m.status) || Date.parse(m.utcDate) < Date.now() - 3 * 3600e3) ? 'PP' : 'UP';
+const fmtTime = d => new Date(d).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+const fmtDate = d => new Date(d).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' });
 const crest = u => u ? `<img src="${esc(u)}" class="w-7 h-7 object-contain" alt="">` : '<span class="w-7 h-7"></span>';
 
 async function api(url) {
@@ -46,19 +105,20 @@ async function api(url) {
 async function loadMatches() {
   try { S.matches = (await api('/api/matches')).matches || []; S.err = null; }
   catch (e) { S.err = e.message; }
-  if (['home','matches'].includes(S.view) && !S.detailId) render();
+  if (['home','matches'].includes(S.view) && !S.detailId) qr();
 }
 
 function badge(m) {
   const k = kind(m);
-  if (k === 'LIVE') return '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 animate-pulse">● LIVE</span>';
+  if (k === 'LIVE') return '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 livebadge"> LIVE</span>';
+  if (k === 'PP') return '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300"> ' + (m.status === 'POSTPONED' ? 'Postponed' : 'Awaiting update') + '</span>';
   if (k === 'FT') return '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">FT</span>';
-  return `<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">${fmtDate(m.utcDate)} · ${fmtTime(m.utcDate)}</span>`;
+  return `<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">${gmt(m.utcDate)} GMT</span>`;
 }
 
 function card(m) {
   const h = m.score?.fullTime?.home, a = m.score?.fullTime?.away;
-  const show = kind(m) !== 'UP';
+  const show = ['LIVE', 'FT'].includes(kind(m));
   return `<div onclick="openMatch(${m.id})" class="cursor-pointer p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500 hover:-translate-y-1 transition space-y-3 ${kind(m) === 'LIVE' ? 'ring-1 ring-red-500/60 shadow-lg shadow-red-500/10' : ''}">
     <div class="flex justify-between items-center text-xs font-bold text-blue-400"><span class="truncate pr-2">${esc(m.competition?.name)}</span>${badge(m)}</div>
     <div class="flex justify-between items-center font-bold text-sm"><div class="flex items-center gap-2">${crest(m.homeTeam.crest)}${star(m.homeTeam.id)}<span>${esc(m.homeTeam.shortName || m.homeTeam.name)}</span></div><span class="text-lg">${show ? (h ?? 0) : ''}</span></div>
@@ -69,48 +129,48 @@ function card(m) {
 function section(title, list) {
   if (!list.length) return '';
   return `<h2 class="text-lg font-black mt-8 mb-3">${title} <span class="text-slate-500 text-sm">(${list.length})</span></h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${[...list].sort((a, b) => fv(b) - fv(a)).map(card).join('')}</div>`;
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${[...list].sort((a, b) => fv(b) - fv(a) || pri(a) - pri(b)).map(card).join('')}</div>`;
 }
 
 function vis() {
   const q = S.q.trim().toLowerCase();
-  return S.matches.filter(m => (S.league === 'ALL' || m.competition?.name === S.league) &&
+  return S.matches.filter(m => ldate(m) === S.day && (S.league === 'ALL' || m.competition?.name === S.league) &&
     (!q || (m.homeTeam.name + ' ' + m.awayTeam.name).toLowerCase().includes(q)));
 }
 function viewMatches() {
-  const chips = [['ALL','Semua'],['LIVE','Live'],['UP','Akan Main'],['FT','Selesai']].map(([k, l]) =>
+  const chips = [['ALL','All'],['LIVE','Live'],['UP','Upcoming'],['FT','Completed']].map(([k, l]) =>
     `<button onclick="S.filter='${k}';render()" class="px-4 py-2 rounded-full text-xs font-bold border ${S.filter === k ? 'bg-blue-600 border-blue-500' : 'bg-slate-900 border-slate-700 text-slate-300'}">${l}</button>`).join('');
   let body;
-  if (S.err) body = `<p class="text-red-400 text-sm mt-6">Gagal ambil data: ${esc(S.err)}</p>`;
-  else if (!S.matches.length) body = '<p class="text-slate-400 text-sm mt-6">Belum ada pertandingan (atau data masih dimuat).</p>';
+  if (S.err) body = `<p class="text-red-400 text-sm mt-6">Failed to load data: ${esc(S.err)}</p>`;
+  else if (!S.matches.length) body = '<p class="text-slate-400 text-sm mt-6">No matches yet (or data is still loading).</p>';
   else {
     const live = vis().filter(m => kind(m) === 'LIVE');
     const up = vis().filter(m => kind(m) === 'UP').sort((x, y) => new Date(x.utcDate) - new Date(y.utcDate));
     const ft = vis().filter(m => kind(m) === 'FT').sort((x, y) => new Date(y.utcDate) - new Date(x.utcDate));
-    const f = S.filter;
-    body = (f === 'ALL' || f === 'LIVE' ? section('🔴 Sedang Berlangsung', live) : '')
-         + (f === 'ALL' || f === 'UP' ? section('⏰ Akan Main', up) : '')
-         + (f === 'ALL' || f === 'FT' ? section('✅ Selesai', ft) : '');
-    if (!body) body = '<p class="text-slate-400 text-sm mt-6">Tidak ada pertandingan di kategori ini.</p>';
+    const pp = vis().filter(m => kind(m) === 'PP'); const f = S.filter;
+    body = (f === 'ALL' || f === 'LIVE' ? section(' Live Now', live) : '')
+         + (f === 'ALL' || f === 'UP' ? section('⏰ Upcoming', up) : '')
+         + (f === 'ALL' || f === 'FT' ? section(' Completed', ft) : '') + (f === 'ALL' ? section(' Postponed / Awaiting Update', pp) : '');
+    if (!body) body = '<p class="text-slate-400 text-sm mt-6">No matches in this category.</p>';
   }
-  const cnt = k => S.matches.filter(m => kind(m) === k).length;
-  const stat = (n, l, c) => `<div class="flex-1 min-w-[90px] p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-center"><div class="text-3xl font-black ${c}">${n}</div><div class="text-[10px] uppercase tracking-widest text-slate-400">${l}</div></div>`;
+  const cnt = k => S.matches.filter(m => ldate(m) === S.day && kind(m) === k).length;
+  const stat = (n, l, c) => `<div class="flex-1 min-w-[90px] p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-center"><div class="text-3xl font-black ${c}" data-count="${n}">${n}</div><div class="text-[10px] uppercase tracking-widest text-slate-400">${l}</div></div>`;
   const leagues = [...new Set(S.matches.map(m => m.competition?.name))].filter(Boolean);
-  const lchips = ['ALL', ...leagues].map(l => `<button onclick="S.league=this.dataset.l;render()" data-l="${esc(l)}" class="px-3 py-1.5 rounded-lg text-[11px] font-bold ${S.league === l ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">${l === 'ALL' ? 'Semua Liga' : esc(l)}</button>`).join('');
-  return `<section class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-blue-900 via-slate-900 to-slate-950 border border-slate-800">
-      <p class="text-xs font-bold tracking-widest text-cyan-400 uppercase">⚡ Live Matchday</p>
+  const lchips = ['ALL', ...leagues].map(l => `<button onclick="S.league=this.dataset.l;render()" data-l="${esc(l)}" class="px-3 py-1.5 rounded-lg text-[11px] font-bold ${S.league === l ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">${l === 'ALL' ? 'All Leagues' : esc(l)}</button>`).join('');
+  return `<section class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-blue-500 via-blue-700 to-cyan-600 hero-anim border border-slate-800">
+      <p class="text-xs font-bold tracking-widest text-cyan-400 uppercase"> Live Matchday</p>
       <h1 class="text-3xl sm:text-5xl font-black mt-1">Match Center</h1>
-      <p class="text-xs text-slate-400 mt-1">Refresh otomatis tiap 60 detik. Klik pertandingan untuk detail lengkap.</p>
-      <div class="flex gap-3 mt-5 flex-wrap">${stat(cnt('LIVE'), 'Live', 'text-red-400')}${stat(cnt('UP'), 'Akan main', 'text-blue-300')}${stat(cnt('FT'), 'Selesai', 'text-emerald-400')}</div>
+      <p class="text-xs text-slate-400 mt-1">Auto-refreshes every 60 seconds. Select a match for full details.</p>
+      <div class="flex gap-3 mt-5 flex-wrap">${stat(cnt('LIVE'), 'Live', 'text-red-400')}${stat(cnt('UP'), 'Upcoming', 'text-blue-300')}${stat(cnt('FT'), 'Completed', 'text-emerald-400')}</div>
     </section>
-    <input id="q" value="${esc(S.q)}" oninput="S.q=this.value;S.fq=1;render()" placeholder="🔍 Cari tim..." class="w-full mt-5 p-3 rounded-xl bg-slate-900 border border-slate-700 text-sm">
+    ${dayChips()}<input id="q" value="${esc(S.q)}" oninput="S.q=this.value;S.fq=1;qr()" placeholder=" Search teams..." class="w-full mt-5 p-3 rounded-xl bg-slate-900 border border-slate-700 text-sm">
     <div class="flex gap-2 flex-wrap mt-4">${chips}</div>
     <div class="flex gap-2 flex-wrap mt-3">${lchips}</div>${body}`;
 }
 
 // ============ DETAIL PERTANDINGAN ============
 async function openMatch(id) {
-  S.view = 'matches'; S.detailId = id; S.detail = null; S.detailErr = null; render(); window.scrollTo(0, 0);
+  $('app').classList.remove('noanim'); S.tab = 'sum'; S.af = null; S.view = 'matches'; S.detailId = id; S.detail = null; S.detailErr = null; render(); window.scrollTo(0, 0);
   await loadDetail();
   loadExtras();
 }
@@ -118,51 +178,52 @@ async function loadDetail() {
   if (!S.detailId) return;
   try { S.detail = await api('/api/match/' + S.detailId); S.detailErr = null; }
   catch (e) { S.detailErr = e.message; }
-  if (S.detailId) render();
+  if (S.detailId) qr();
 }
 function closeMatch() { S.detailId = null; S.detail = null; render(); }
 
 function viewDetail() {
-  const back = '<button onclick="closeMatch()" class="mb-4 px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm font-bold text-blue-400">← Kembali</button>';
-  if (S.detailErr && !S.detail) return back + `<p class="text-red-400 text-sm">Gagal ambil detail: ${esc(S.detailErr)}</p>`;
+  const back = '<button onclick="closeMatch()" class="mb-4 px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm font-bold text-blue-400">← Back</button>';
+  if (S.detailErr && !S.detail) return back + `<p class="text-red-400 text-sm">Failed to load details: ${esc(S.detailErr)}</p>`;
   const m = S.detail;
-  if (!m) return back + '<p class="text-slate-400 text-sm">Memuat...</p>';
+  if (!m) return back + '<p class="text-slate-400 text-sm">Loading...</p>';
   const k = kind(m);
   const ft = m.score?.fullTime || {}, ht = m.score?.halfTime || {};
-  const statusText = k === 'LIVE' ? '● LIVE' : k === 'FT' ? 'FULL TIME' : fmtDate(m.utcDate) + ' · ' + fmtTime(m.utcDate);
+  const statusText = k === 'LIVE' ? ' LIVE' : k === 'FT' ? 'FULL TIME' : fmtDate(m.utcDate) + ' · ' + gmt(m.utcDate) + ' GMT';
   const team = t => `<div class="flex-1 text-center space-y-2"><img src="${esc(t.crest)}" class="w-20 h-20 mx-auto object-contain" alt=""><div class="font-bold">${esc(t.name)}</div></div>`;
 
   const ev = [
-    ...(m.goals || []).map(g => ({ min: g.minute, inj: g.injuryTime, side: g.team?.id === m.homeTeam.id ? 'h' : 'a', icon: '⚽', text: (g.scorer?.name || 'Gol') + (g.assist?.name ? ` (assist: ${g.assist.name})` : '') })),
-    ...(m.bookings || []).map(b => ({ min: b.minute, side: b.team?.id === m.homeTeam.id ? 'h' : 'a', icon: b.card === 'RED' ? '🟥' : '🟨', text: b.player?.name || 'Kartu' })),
-    ...(m.substitutions || []).map(s => ({ min: s.minute, side: s.team?.id === m.homeTeam.id ? 'h' : 'a', icon: '🔄', text: `${s.playerIn?.name || '?'} ⬆ ${s.playerOut?.name || '?'} ⬇` }))
+    ...(m.goals || []).map(g => ({ min: g.minute, inj: g.injuryTime, side: g.team?.id === m.homeTeam.id ? 'h' : 'a', icon: ico('g'), text: (g.scorer?.name || 'Goals') + (g.assist?.name ? ` (assist: ${g.assist.name})` : '') })),
+    ...(m.bookings || []).map(b => ({ min: b.minute, side: b.team?.id === m.homeTeam.id ? 'h' : 'a', icon: ico(b.card === 'RED' ? 'r' : 'y'), text: b.player?.name || 'Kartu' })),
+    ...(m.substitutions || []).map(s => ({ min: s.minute, side: s.team?.id === m.homeTeam.id ? 'h' : 'a', icon: ico('s'), text: `${s.playerIn?.name || '?'} in, ${s.playerOut?.name || '?'} out` }))
   ].sort((x, y) => (x.min || 0) - (y.min || 0));
 
   const evHtml = ev.length ? ev.map(e => `<div class="flex items-center gap-3 py-2 border-b border-slate-800 text-sm ${e.side === 'a' ? 'flex-row-reverse text-right' : ''}">
       <span class="w-12 text-xs font-bold text-blue-400 ${e.side === 'a' ? 'text-left' : ''}">${e.min ?? ''}'${e.inj ? '+' + e.inj : ''}</span><span>${e.icon}</span><span>${esc(e.text)}</span></div>`).join('')
-    : '<p class="text-slate-400 text-sm">Belum ada event (gol/kartu) dari penyedia data untuk pertandingan ini.</p>';
+    : '<p class="text-slate-400 text-sm">No events provided by the data provider for this match yet.</p>';
 
   const info = [
-    ['Kompetisi', m.competition?.name], ['Babak/Matchday', m.matchday ? 'Matchday ' + m.matchday : m.stage],
-    ['Stadion', m.venue], ['Wasit', (m.referees || [])[0]?.name], ['Skor babak pertama', ht.home != null ? `${ht.home} - ${ht.away}` : null]
+    ['Competition', m.competition?.name], ['Babak/Matchday', m.matchday ? 'Matchday ' + m.matchday : m.stage],
+    ['Venue', m.venue], ['Referee', (m.referees || [])[0]?.name], ['Half-time score', ht.home != null ? `${ht.home} - ${ht.away}` : null]
   ].filter(x => x[1]).map(([a, b]) => `<div class="flex justify-between py-2 border-b border-slate-800 text-sm"><span class="text-slate-400">${a}</span><span class="font-semibold text-right">${esc(b)}</span></div>`).join('');
 
   return back + `
-  <div class="rounded-3xl p-6 sm:p-10 bg-gradient-to-b from-blue-950 to-slate-900 border border-slate-800">
+  <div class="rounded-3xl p-6 sm:p-10 bg-gradient-to-b from-blue-600 to-indigo-800 hero-anim border border-slate-800">
     <p class="text-center text-xs font-bold tracking-widest text-blue-400 uppercase">${esc(m.competition?.name)}</p>
     <div class="flex items-center mt-6">
       ${team(m.homeTeam)}
       <div class="px-4 text-center">
-        <div class="text-5xl sm:text-6xl font-black">${k === 'UP' ? 'vs' : (ft.home ?? 0) + ' - ' + (ft.away ?? 0)}</div>
-        <div class="mt-2 text-xs font-bold ${k === 'LIVE' ? 'text-red-400 animate-pulse' : 'text-slate-300'}">${statusText}</div>
+        <div class="text-5xl sm:text-6xl font-black">${k === 'UP' || k === 'PP' ? 'vs' : (ft.home ?? 0) + ' - ' + (ft.away ?? 0)}</div>
+        <div class="mt-2 text-xs font-bold ${k === 'LIVE' ? 'text-red-400 livebadge' : 'text-slate-300'}">${statusText}</div>
       </div>
       ${team(m.awayTeam)}
     </div>
   </div>
-  <div class="grid md:grid-cols-2 gap-4 mt-4">
+  ${tabsBar()}${S.tab !== 'sum' ? tabBody(m) : ''}
+  <div class="grid md:grid-cols-2 gap-4 mt-4 ${S.tab !== 'sum' ? 'hidden' : ''}">
     <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-2">Match Events</h3>${evHtml}</div>
-    <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-2">Info Pertandingan</h3>${info || '<p class="text-slate-400 text-sm">Belum ada info.</p>'}</div>
-  </div>${extras(m)}`;
+    <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-2">Match Info</h3>${info || '<p class="text-slate-400 text-sm">No info yet.</p>'}</div>
+  </div>${S.tab === 'sum' ? extras(m) : ''}`;
 }
 
 async function loadExtras() {
@@ -176,20 +237,20 @@ async function loadExtras() {
       S.pos = { h: t.find(r => r.team.id === S.detail.homeTeam.id), a: t.find(r => r.team.id === S.detail.awayTeam.id) };
     }
   } catch (e) {}
-  if (S.detailId) render();
+  if (S.detailId) qr();
 }
 function extras(m) {
   let out = '';
-  const pc = (t, r) => r ? `<div class="flex-1 text-center p-4 rounded-xl bg-slate-950/60 border border-slate-800">${crest(t.crest)}<div class="text-xs font-bold mt-1">${esc(t.shortName || t.name)}</div><div class="text-3xl font-black text-blue-400">#${r.position}</div><div class="text-[10px] text-slate-400 uppercase">${r.points} pts · ${r.playedGames} main</div></div>` : '';
-  if (S.pos && (S.pos.h || S.pos.a)) out += `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">Posisi di Klasemen</h3><div class="flex gap-3 items-center">${pc(m.homeTeam, S.pos.h)}<span class="text-slate-500 font-bold">VS</span>${pc(m.awayTeam, S.pos.a)}</div></div>`;
+  const pc = (t, r) => r ? `<div class="flex-1 text-center p-4 rounded-xl bg-slate-950/60 border border-slate-800">${crest(t.crest)}<div class="text-xs font-bold mt-1">${esc(t.shortName || t.name)}</div><div class="text-3xl font-black text-blue-400">#${r.position}</div><div class="text-[10px] text-slate-400 uppercase">${r.points} pts · ${r.playedGames} played</div></div>` : '';
+  if (S.pos && (S.pos.h || S.pos.a)) out += `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">League Position</h3><div class="flex gap-3 items-center">${pc(m.homeTeam, S.pos.h)}<span class="text-slate-500 font-bold">VS</span>${pc(m.awayTeam, S.pos.a)}</div></div>`;
   const ag = S.h2h?.aggregates;
   if (ag && ag.numberOfMatches) {
     const hw = ag.homeTeam.id === m.homeTeam.id ? ag.homeTeam : ag.awayTeam, aw = hw === ag.homeTeam ? ag.awayTeam : ag.homeTeam;
     const n = ag.numberOfMatches, pct = x => Math.round(x / n * 100);
     const list = (S.h2h.matches || []).slice(0, 5).map(x => `<div class="flex justify-between text-xs py-1.5 border-b border-slate-800"><span class="text-slate-400">${fmtDate(x.utcDate)}</span><span>${esc(x.homeTeam.shortName || x.homeTeam.name)} <b>${x.score.fullTime.home}-${x.score.fullTime.away}</b> ${esc(x.awayTeam.shortName || x.awayTeam.name)}</span></div>`).join('');
-    out += `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">Head to Head <span class="text-slate-500 text-xs">(${n} pertemuan terakhir)</span></h3>
+    out += `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">Head to Head <span class="text-slate-500 text-xs">(${n} recent meetings)</span></h3>
       <div class="flex h-3 rounded-full overflow-hidden"><div class="bg-blue-500" style="width:${pct(hw.wins)}%"></div><div class="bg-slate-500" style="width:${pct(hw.draws)}%"></div><div class="bg-red-500" style="width:${pct(aw.wins)}%"></div></div>
-      <div class="flex justify-between text-xs mt-2 font-bold"><span class="text-blue-400">${esc(m.homeTeam.shortName || m.homeTeam.name)} ${hw.wins}M</span><span class="text-slate-400">Seri ${hw.draws}</span><span class="text-red-400">${aw.wins}M ${esc(m.awayTeam.shortName || m.awayTeam.name)}</span></div>
+      <div class="flex justify-between text-xs mt-2 font-bold"><span class="text-blue-400">${esc(m.homeTeam.shortName || m.homeTeam.name)} ${hw.wins}M</span><span class="text-slate-400">Draw ${hw.draws}</span><span class="text-red-400">${aw.wins}M ${esc(m.awayTeam.shortName || m.awayTeam.name)}</span></div>
       <div class="mt-3">${list}</div></div>`;
   }
   return out;
@@ -197,90 +258,192 @@ function extras(m) {
 
 S.content = { predictions: [], news: [], kits: [] }; S.token = null; S.sc = null;
 try { S.fav = JSON.parse(localStorage.getItem('fav') || '[]'); } catch (e) { S.fav = []; }
-try { if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light'); } catch (e) {}
+try { if (localStorage.getItem('theme') === 'night') document.documentElement.classList.add('night'); } catch (e) {}
 const fv = m => (S.fav.includes(m.homeTeam.id) || S.fav.includes(m.awayTeam.id)) ? 1 : 0;
 function toggleFav(ev, id) { ev.stopPropagation(); S.fav = S.fav.includes(id) ? S.fav.filter(x => x !== id) : [...S.fav, id]; try { localStorage.setItem('fav', JSON.stringify(S.fav)); } catch (e) {} render(); }
-const star = id => `<button onclick="toggleFav(event,${id})" class="mr-1 ${S.fav.includes(id) ? 'text-yellow-400' : 'text-slate-600'}">★</button>`;
-function toggleTheme() { const l = document.documentElement.classList.toggle('light'); try { localStorage.setItem('theme', l ? 'light' : 'dark'); } catch (e) {} }
+const star = id => `<button onclick="toggleFav(event,${id})" class="mr-1 ${S.fav.includes(id) ? 'text-blue-400' : 'text-slate-500'}">${STAR}</button>`;
+function toggleTheme() { const n = document.documentElement.classList.toggle('night'); try { localStorage.setItem('theme', n ? 'night' : 'day'); } catch (e) {} }
 async function loadContent() { try { S.content = await api('/api/content'); } catch (e) {} if (['home', 'predictions', 'record', 'kits'].includes(S.view) || (S.view === 'admin' && S.token)) render(); }
 
 const empty = t => `<p class="text-slate-400 text-sm mt-6">${t}</p>`;
-const resBadge = r => r === 'won' ? '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">MENANG</span>' : r === 'lost' ? '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400">KALAH</span>' : '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">PENDING</span>';
-const predCard = p => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><div class="flex justify-between text-xs font-bold text-blue-400"><span>${esc(p.competition)}</span>${resBadge(p.result)}</div><h3 class="font-bold text-lg">${esc(p.match)}</h3><p class="text-sm text-slate-300">Pick: <b>${esc(p.pick)}</b>${p.score ? ' · Skor ' + esc(p.score) : ''}</p></div>`;
-const newsCard = n => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-bold">${esc(n.title)}</h3><p class="text-sm text-slate-400 mt-2">${esc(n.text)}</p><p class="text-[10px] text-slate-500 mt-2">${fmtDate(n.date)}</p></div>`;
 const title = (h, sub) => `<h1 class="text-3xl font-black">${h}</h1><p class="text-xs text-slate-400 mb-4">${sub}</p>`;
 
-function viewHome() {
-  const c = S.content;
-  const up = S.matches.filter(m => kind(m) === 'UP').sort((x, y) => new Date(x.utcDate) - new Date(y.utcDate));
-  let feat = [...S.matches.filter(m => kind(m) === 'LIVE'), ...up].slice(0, 3);
-  if (!feat.length) feat = S.matches.filter(m => kind(m) === 'FT').slice(0, 3);
-  const news = [...c.news].reverse().slice(0, 3), preds = [...c.predictions].reverse().slice(0, 3);
-  return `<section class="rounded-3xl p-8 sm:p-12 bg-gradient-to-br from-blue-900 via-slate-900 to-slate-950 border border-slate-800">
-      <p class="text-xs font-bold tracking-widest text-cyan-400 uppercase">⚡ Football Culture</p>
-      <h1 class="text-4xl sm:text-6xl font-black mt-2 leading-none">THE GAME,<br>BEYOND THE SCORE</h1>
-      <button onclick="go('matches')" class="mt-6 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold">Buka Match Center</button></section>
-    <h2 class="text-lg font-black mt-8 mb-3">🔥 Match Unggulan</h2>
-    ${feat.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${feat.map(card).join('')}</div>` : empty('Belum ada match.')}
-    <h2 class="text-lg font-black mt-8 mb-3">🎯 Prediksi Terbaru</h2>
-    ${preds.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${preds.map(predCard).join('')}</div>` : empty('Belum ada prediksi.')}
-    <h2 class="text-lg font-black mt-8 mb-3">📰 Berita</h2>
-    ${news.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${news.map(newsCard).join('')}</div>` : empty('Belum ada berita. Tambah lewat Admin.')}`;
-}
-function viewPredictions() {
-  const l = [...S.content.predictions].reverse();
-  return title('Prediksi', 'Pilihan editorial BRIGHTNEWS.') + (l.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${l.map(predCard).join('')}</div>` : empty('Belum ada prediksi.'));
-}
-function viewRecord() {
-  const p = S.content.predictions, w = p.filter(x => x.result === 'won').length, l = p.filter(x => x.result === 'lost').length;
-  const box = (n, t, c) => `<div class="p-5 rounded-xl bg-slate-900 border border-slate-800 text-center"><div class="text-xs text-slate-400">${t}</div><div class="text-3xl font-black ${c}">${n}</div></div>`;
-  return title('Rekor Prediksi', 'Dihitung otomatis dari prediksi yang sudah ditandai Menang/Kalah di Admin.') +
-    `<div class="grid grid-cols-2 md:grid-cols-4 gap-4">${box(p.length, 'Total', '')}${box(w, 'Menang', 'text-emerald-400')}${box(l, 'Kalah', 'text-red-400')}${box(w + l ? Math.round(w / (w + l) * 100) + '%' : '-', 'Win Rate', 'text-blue-400')}</div>`;
-}
-function viewKits() {
-  const l = S.content.kits;
-  const link = k => /^https?:\/\//.test(k.link || '') ? `<a href="${esc(k.link)}" target="_blank" rel="noopener" class="inline-block mt-3 px-4 py-2 rounded-lg bg-blue-600 text-xs font-bold">Beli</a>` : '';
-  return title('BRIGHT KITS', 'Jersey dan apparel pilihan.') + (l.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${l.map(k => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-bold text-lg">${esc(k.name)}</h3><p class="text-sm text-slate-400 mt-1">${esc(k.desc)}</p><p class="font-black text-emerald-400 mt-2">${esc(k.price)}</p>${link(k)}</div>`).join('')}</div>` : empty('Belum ada produk.'));
-}
 function scorers() {
   if (!S.sc || !S.sc.length) return '';
-  return `<h2 class="text-lg font-black mt-8 mb-3">⚽ Top Skor</h2><div class="rounded-2xl bg-slate-900 border border-slate-800 divide-y divide-slate-800">${S.sc.map((x, i) => `<div class="flex items-center gap-3 p-3 text-sm"><span class="w-5 text-slate-400">${i + 1}</span>${crest(x.team.crest)}<span class="flex-1 font-semibold">${esc(x.player.name)} <span class="text-slate-500 text-xs">${esc(x.team.shortName || x.team.name)}</span></span><b class="text-blue-400">${x.goals}</b></div>`).join('')}</div>`;
+  return `<h2 class="text-lg font-black mt-8 mb-3"> Top Scorers</h2><div class="rounded-2xl bg-slate-900 border border-slate-800 divide-y divide-slate-800">${S.sc.map((x, i) => `<div class="flex items-center gap-3 p-3 text-sm"><span class="w-5 text-slate-400">${i + 1}</span>${crest(x.team.crest)}<span class="flex-1 font-semibold">${esc(x.player.name)} <span class="text-slate-500 text-xs">${esc(x.team.shortName || x.team.name)}</span></span><b class="text-blue-400">${x.goals}</b></div>`).join('')}</div>`;
 }
 
 // ============ ADMIN ============
 const v = id => $(id).value;
 const inp = (id, ph) => `<input id="${id}" placeholder="${ph}" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm">`;
-const save = js => `<button onclick="${js}" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-bold">Simpan</button>`;
+const save = js => `<button onclick="${js}" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-bold">Save</button>`;
 const hdr = () => ({ 'Content-Type': 'application/json', 'x-token': S.token });
-function viewAdmin() {
-  if (!S.token) return `<div class="max-w-md mx-auto p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-4"><h1 class="text-2xl font-black text-center">Admin Login</h1>${inp('adm-user', 'Username')}<input id="adm-pass" type="password" placeholder="Password" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm"><button onclick="login()" class="w-full py-3 rounded-xl bg-blue-600 font-bold text-sm">Masuk</button></div>`;
-  const list = (t, arr, label) => [...arr].reverse().map(x => `<div class="flex justify-between items-center gap-2 py-2 border-b border-slate-800 text-sm"><span class="truncate">${esc(label(x))} ${t === 'predictions' ? resBadge(x.result) : ''}</span><span class="flex gap-3 shrink-0">${t === 'predictions' ? `<button onclick="setRes(${x.id},'won')" class="text-emerald-400 text-xs font-bold">Menang</button><button onclick="setRes(${x.id},'lost')" class="text-orange-400 text-xs font-bold">Kalah</button>` : ''}<button onclick="delItem('${t}',${x.id})" class="text-red-400 text-xs font-bold">Hapus</button></span></div>`).join('') || '<p class="text-xs text-slate-500">Kosong</p>';
-  const box = (t, b) => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><h3 class="font-black">${t}</h3>${b}</div>`;
-  const c = S.content;
-  return `<div class="flex justify-between items-center mb-4"><h1 class="text-3xl font-black">Admin Desk</h1><button onclick="S.token=null;render()" class="px-4 py-2 rounded-xl bg-red-600/20 text-red-400 text-xs font-bold">Logout</button></div>
-  <div class="grid md:grid-cols-3 gap-4">
-  ${box('Prediksi', inp('p-comp', 'Liga') + inp('p-match', 'Real Madrid vs Man City') + inp('p-pick', 'Pick, mis. Over 2.5') + inp('p-score', 'Skor, mis. 2-1') + save("addItem('predictions',{competition:v('p-comp'),match:v('p-match'),pick:v('p-pick'),score:v('p-score'),result:'pending'})") + list('predictions', c.predictions, x => x.match))}
-  ${box('Berita', inp('n-title', 'Judul') + inp('n-text', 'Isi singkat') + save("addItem('news',{title:v('n-title'),text:v('n-text')})") + list('news', c.news, x => x.title))}
-  ${box('Bright Kits', inp('k-name', 'Nama produk') + inp('k-desc', 'Deskripsi') + inp('k-price', 'Harga, mis. Rp350.000') + inp('k-link', 'Link beli (https://...)') + save("addItem('kits',{name:v('k-name'),desc:v('k-desc'),price:v('k-price'),link:v('k-link')})") + list('kits', c.kits, x => x.name))}
-  </div>`;
-}
 async function login() {
   try {
     const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: v('adm-user'), password: v('adm-pass') }) });
-    if (!r.ok) return alert('Username atau password salah');
+    if (!r.ok) return alert('Wrong username or password');
     S.token = (await r.json()).token; render();
-  } catch (e) { alert('Server tidak bisa dihubungi'); }
+  } catch (e) { alert('Cannot reach the server'); }
 }
 async function adm(url, method, body) {
   const r = await fetch(url, { method, headers: hdr(), body: body ? JSON.stringify(body) : undefined });
-  if (!r.ok) return alert('Gagal. Coba login ulang.');
+  if (!r.ok) return alert('Failed. Please sign in again.');
   await loadContent(); render();
 }
 const addItem = (type, item) => adm('/api/content', 'POST', { type, item });
-const delItem = (t, id) => confirm('Hapus?') && adm(`/api/content/${t}/${id}`, 'DELETE');
+const delItem = (t, id) => confirm('Delete?') && adm(`/api/content/${t}/${id}`, 'DELETE');
 const setRes = (id, result) => adm('/api/content/predictions/' + id, 'PATCH', { result });
 
-// ============ KLASEMEN ============
+S.day = new Date().toLocaleDateString('sv'); S.tab = 'sum'; S.form = {}; S.af = null;
+const ymd = d => new Date(d).toLocaleDateString('sv');
+const ldate = m => ymd(m.utcDate);
+const qr = () => { $('app').classList.add('noanim'); render(); };
+function dayChips() {
+  const out = [];
+  for (let i = -2; i <= 3; i++) {
+    const d = new Date(Date.now() + i * 864e5), k = ymd(d), n = S.matches.filter(m => ldate(m) === k).length;
+    const lab = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : i === -1 ? 'Yesterday' : d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    out.push(`<button onclick="S.day='${k}';render()" class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold ${S.day === k ? 'bg-cyan-400 text-slate-950' : 'bg-slate-800 text-slate-200'}">${lab}<span class="ml-1 opacity-70">${n}</span></button>`);
+  }
+  return `<div class="flex gap-2 overflow-x-auto mt-5 pb-1">${out.join('')}</div>`;
+}
+const tabsBar = () => `<div class="flex gap-2 mt-5">${[['sum', 'Ringkasan'], ['stats', 'Stats'], ['form', 'Form']].map(([k, l]) => `<button onclick="setTab('${k}')" class="px-5 py-2 rounded-full text-xs font-bold ${S.tab === k ? 'bg-cyan-400 text-slate-950' : 'bg-slate-800 text-slate-200'}">${l}</button>`).join('')}</div>`;
+function setTab(t) { S.tab = t; qr(); if (t === 'form') loadForm(); if (t === 'stats') loadStats(); }
+async function loadForm() {
+  const m = S.detail; if (!m) return;
+  for (const t of [m.homeTeam, m.awayTeam]) {
+    if (S.form[t.id]) continue;
+    try { S.form[t.id] = (await api('/api/form/' + t.id)).matches || []; } catch (e) { S.form[t.id] = []; }
+    if (S.detailId && S.tab === 'form') qr();
+  }
+}
+async function loadStats() {
+  const m = S.detail; if (!m || S.af) return;
+  try { S.af = await api(`/api/af/match?date=${m.utcDate.slice(0, 10)}&home=${encodeURIComponent(m.homeTeam.name)}&away=${encodeURIComponent(m.awayTeam.name)}`); }
+  catch (e) { S.af = { available: false, reason: e.message }; }
+  if (S.detailId && S.tab === 'stats') qr();
+}
+function formBlock(t) {
+  const l = S.form[t.id];
+  if (!l) return '<p class="text-xs text-slate-400">Loading...</p>';
+  if (!l.length) return '<p class="text-xs text-slate-400">No data yet.</p>';
+  const rows = [...l].sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate)).slice(0, 5).map(x => {
+    const home = x.homeTeam.id === t.id, h = x.score.fullTime.home, a = x.score.fullTime.away, me = home ? h : a, op = home ? a : h;
+    return { r: me > op ? 'W' : me < op ? 'L' : 'D', x, h, a };
+  });
+  const col = r => r === 'W' ? 'bg-emerald-500' : r === 'L' ? 'bg-red-500' : 'bg-slate-500';
+  return `<div class="flex gap-2 mb-3">${[...rows].reverse().map(o => `<span class="w-9 h-9 rounded-full ${col(o.r)} flex items-center justify-center text-sm font-black">${o.r}</span>`).join('')}</div>` +
+    rows.map(o => `<div class="flex justify-between text-xs py-1.5 border-b border-slate-800"><span class="text-slate-400">${fmtDate(o.x.utcDate)}</span><span>${esc(o.x.homeTeam.shortName || o.x.homeTeam.name)} <b>${o.h}-${o.a}</b> ${esc(o.x.awayTeam.shortName || o.x.awayTeam.name)}</span></div>`).join('');
+}
+const num = v => parseFloat(String(v)) || 0;
+const bar = (l, h, a) => { const n = num(h) + num(a) || 1, p = Math.round(num(h) / n * 100); return `<div class="py-2"><div class="flex justify-between text-sm font-bold"><span>${esc(h)}</span><span class="text-xs text-slate-400 font-semibold">${l}</span><span>${esc(a)}</span></div><div class="flex h-2 rounded-full overflow-hidden bg-slate-800 mt-1"><div class="bar bg-cyan-400" style="width:${p}%"></div><div class="flex-1 bg-indigo-400"></div></div></div>`; };
+function statsTab(m) {
+  const a = S.af, nm = t => esc(t.shortName || t.name);
+  const head = `<div class="flex justify-between font-black text-sm mb-2"><span>${nm(m.homeTeam)}</span><span>${nm(m.awayTeam)}</span></div>`;
+  let body = '';
+  if (!a) return '<p class="text-slate-400 text-sm mt-4">Loading statistics...</p>';
+  if (a.available && a.statistics.length >= 2) {
+    const hs = a.statistics.find(s => s.team.id === a.homeId) || a.statistics[0], as = a.statistics.find(s => s !== hs);
+    const g = (s, t) => { const x = (s.statistics || []).find(y => y.type === t); return x && x.value != null ? x.value : 0; };
+    const rows = [['Ball Possession', 'Possession'], ['expected_goals', 'xG'], ['Total Shots', 'Total shots'], ['Shots on Goal', 'Shots on target'], ['Corner Kicks', 'Corners'], ['Fouls', 'Fouls'], ['Yellow Cards', 'Yellow cards'], ['Red Cards', 'Red cards'], ['Offsides', 'Offside'], ['Goalkeeper Saves', 'Saves'], ['Passes %', 'Pass accuracy']];
+    body = rows.map(([k, l]) => bar(l, g(hs, k), g(as, k))).join('');
+  } else {
+    const P = S.pos, r = (t, f) => P && P[t] ? P[t][f] : '-';
+    body = `<p class="text-xs text-amber-300 mb-3">Live statistics unavailable (${esc(a.reason || 'no data')}). Showing season comparison instead.</p>` +
+      (P && (P.h || P.a) ? [['Played', 'playedGames'], ['Won', 'won'], ['Draw', 'draw'], ['Lost', 'lost'], ['Goals', 'goalsFor'], ['Conceded', 'goalsAgainst'], ['Points', 'points']].map(([l, f]) => bar(l, r('h', f), r('a', f))).join('') : '<p class="text-slate-400 text-sm">Standings not available for this competition.</p>');
+  }
+  return `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">Statistik</h3>${head}${body}</div>`;
+}
+function tabBody(m) {
+  if (S.tab === 'stats') return statsTab(m);
+  return `<div class="grid md:grid-cols-2 gap-4 mt-4">${[m.homeTeam, m.awayTeam].map(t => `<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><div class="flex items-center gap-2 mb-3">${crest(t.crest)}<h3 class="font-black">${esc(t.shortName || t.name)}</h3></div>${formBlock(t)}</div>`).join('')}</div>`;
+}
+
+const gmt = d => new Date(d).toISOString().slice(11, 16);
+const pri = m => { const i = ['CL', 'PL', 'SA', 'BL1', 'PD', 'FL1'].indexOf(m.competition?.code); return i < 0 ? 9 : i; };
+const STAR = '<svg viewBox="0 0 20 20" class="w-4 h-4 inline" fill="currentColor"><path d="M10 1.5l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.4 4.8 17.4 6 11.6 1.6 7.6l5.9-.7z"/></svg>';
+const ico = t => t === 'g' ? '<span class="ico g"></span>' : t === 'y' ? '<span class="ico y"></span>' : t === 'r' ? '<span class="ico r"></span>' : '<span class="text-[9px] font-black text-blue-400">SUB</span>';
+const IO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); IO.unobserve(e.target); } }), { threshold: .1 });
+function hook() { requestAnimationFrame(() => { const q = $('app').classList.contains('noanim'); document.querySelectorAll('.reveal').forEach(el => q ? el.classList.add('in') : IO.observe(el)); document.querySelectorAll('[data-count]').forEach(el => { const n = +el.dataset.count; if (q || !n) return; const t0 = performance.now(); const f = t => { const p = Math.min(1, (t - t0) / 900); el.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); }); }); }
+const img = u => /^https?:\/\//.test(u || '') ? u : '';
+const last = a => (a || [])[(a || []).length - 1];
+const pub = () => S.content.predictions.filter(p => p.published !== 'false');
+const pill = (t, c) => `<span class="px-2 py-0.5 rounded ${c}">${t}</span>`;
+const resBadge = r => r === 'won' ? pill('WON', 'bg-emerald-500/20 text-emerald-400') : r === 'lost' ? pill('LOST', 'bg-red-500/20 text-red-400') : r === 'void' ? pill('VOID', 'bg-slate-800 text-slate-400') : pill('PENDING', 'bg-amber-500/20 text-amber-300');
+const predCard = p => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><div class="flex justify-between text-xs font-bold text-blue-400"><span>${esc(p.competition)}</span>${resBadge(p.result)}</div><h3 class="font-bold text-lg">${esc(p.match)}</h3><p class="text-sm">Pick: <b>${esc(p.pick)}</b>${p.score ? ' · Score ' + esc(p.score) : ''}</p>${p.analysis ? `<p class="text-xs text-slate-400">${esc(p.analysis)}</p>` : ''}<p class="text-[10px] text-slate-500">${fmtDate(p.date)}</p></div>`;
+const newsCard = n => `<div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">${img(n.image) ? `<img src="${esc(img(n.image))}" loading="lazy" alt="" class="w-full h-40 object-cover">` : ''}<div class="p-5"><p class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">${esc(n.category || 'News')}</p><h3 class="font-bold mt-1">${esc(n.title)}</h3><p class="text-sm text-slate-400 mt-2">${esc(n.text)}</p><p class="text-[10px] text-slate-500 mt-2">${fmtDate(n.date)}</p></div></div>`;
+const grid3 = a => `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${a}</div>`;
+const sec = (t, inner) => `<h2 class="text-xl font-black mt-12 mb-4 reveal">${t}</h2><div class="reveal">${inner}</div>`;
+const orbit = '<svg class="orbit" viewBox="0 0 400 400" aria-hidden="true"><g class="o3"><circle cx="200" cy="200" r="190" fill="none" stroke="rgba(255,255,255,.18)"/><circle cx="200" cy="10" r="6" fill="#fff"/></g><g class="o1"><circle cx="200" cy="200" r="150" fill="none" stroke="rgba(255,255,255,.35)"/><circle cx="350" cy="200" r="7" fill="#fff"/></g><g class="o2"><circle cx="200" cy="200" r="105" fill="none" stroke="rgba(255,255,255,.3)" stroke-dasharray="4 8"/><circle cx="95" cy="200" r="5" fill="#bfe0ff"/></g><circle class="core" cx="200" cy="200" r="40" fill="rgba(255,255,255,.14)"/></svg>';
+function ticker() {
+  const l = S.matches.filter(m => kind(m) !== 'PP' && ldate(m) === S.day).slice(0, 14);
+  if (!l.length) return '';
+  const it = l.map(m => `<span class="tk"><b>${esc(m.homeTeam.shortName || m.homeTeam.name)}</b> ${kind(m) === 'UP' ? gmt(m.utcDate) + ' GMT' : (m.score?.fullTime?.home ?? 0) + ' - ' + (m.score?.fullTime?.away ?? 0)} <b>${esc(m.awayTeam.shortName || m.awayTeam.name)}</b></span>`).join('');
+  return `<div class="ticker"><div class="tk-in">${it}${it}</div></div>`;
+}
+function viewHome() {
+  const c = S.content, day = S.matches.filter(m => ldate(m) === S.day && kind(m) !== 'PP');
+  const up = day.filter(m => kind(m) === 'UP').sort((x, y) => new Date(x.utcDate) - new Date(y.utcDate));
+  let feat = [...day.filter(m => kind(m) === 'LIVE'), ...up].slice(0, 3);
+  if (!feat.length) feat = day.filter(m => kind(m) === 'FT').slice(0, 3);
+  const cnt = k => day.filter(m => kind(m) === k).length;
+  const st = [['Live', 'LIVE'], ['Upcoming', 'UP'], ['Completed', 'FT']].map(([l, k]) => `<div class="rise flex-1 min-w-[90px] p-4 rounded-2xl bg-slate-900/70 text-center" style="--d:.65s"><div class="text-3xl font-black" data-count="${cnt(k)}">${cnt(k)}</div><div class="text-[10px] uppercase tracking-widest text-slate-400">${l}</div></div>`).join('');
+  const bm = last(c.featured), tk = last(c.takes), pl = last(c.players);
+  const preds = [...pub()].reverse().slice(0, 3), news = [...c.news].reverse().slice(0, 3), tr = [...(c.transfers || [])].reverse().slice(0, 4), fx = [...(c.facts || [])].reverse().slice(0, 3);
+  const take = tk ? `<div class="p-8 rounded-3xl bg-slate-900 border border-slate-800"><p class="text-xs font-bold tracking-widest text-blue-400 mb-2">BRIGHT TAKE</p><h3 class="text-2xl font-black">${esc(tk.title)}</h3><p class="text-sm text-slate-400 mt-2">${esc(tk.text)}</p></div>` : '';
+  const ply = pl ? `<div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 flex gap-5 items-center">${img(pl.image) ? `<img src="${esc(img(pl.image))}" loading="lazy" alt="" class="w-24 h-24 rounded-full object-cover">` : ''}<div><p class="text-xs font-bold tracking-widest text-blue-400">PLAYER OF THE DAY</p><h3 class="text-xl font-black">${esc(pl.name)}</h3><p class="text-xs text-slate-400">${esc(pl.club)} · ${esc(pl.position)}</p><p class="text-sm mt-1">${esc(pl.desc)}</p></div></div>` : '';
+  return `<section class="rounded-3xl p-8 sm:p-14 hero-anim">${orbit}
+    <div class="relative max-w-2xl">
+      <p class="rise text-xs font-bold tracking-[.3em]" style="--d:.1s">BRIGHTNEWS</p>
+      <h1 class="rise text-4xl sm:text-6xl font-black leading-[1.05] mt-3" style="--d:.25s">THE GAME,<br>BEYOND THE SCORE</h1>
+      <p class="rise text-sm sm:text-base mt-4 max-w-lg" style="--d:.4s">Live scores, match analysis, editorial predictions and football culture.</p>
+      <button onclick="go('matches')" class="rise sheen mt-7 px-7 py-3 rounded-xl font-bold" style="--d:.55s;background:#fff!important;color:#0057B8!important">Open Match Center</button>
+      <div class="flex gap-3 mt-8 flex-wrap">${st}</div></div></section>${ticker()}
+    ${sec('Featured Matches', feat.length ? grid3(feat.map(card).join('')) : empty('No matches today.'))}
+    ${bm ? sec('Big Match', `<div class="rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 grid md:grid-cols-2"><div class="p-8 space-y-3"><p class="text-xs font-bold tracking-widest text-blue-400">BIG MATCH · ${esc(bm.competition)}</p><h3 class="text-3xl font-black">${esc(bm.match)}</h3><p class="text-sm text-slate-400">Kick-off ${esc(bm.kickoff)}</p><p class="text-sm">${esc(bm.desc)}</p></div>${img(bm.image) ? `<img src="${esc(img(bm.image))}" loading="lazy" alt="" class="w-full h-full object-cover min-h-[200px]">` : ''}</div>`) : ''}
+    ${take || ply ? sec('Editorial', `<div class="grid md:grid-cols-2 gap-4">${take}${ply}</div>`) : ''}
+    ${preds.length ? sec('Latest Predictions', grid3(preds.map(predCard).join(''))) : ''}
+    ${news.length ? sec('Latest News', grid3(news.map(newsCard).join(''))) : ''}
+    ${tr.length ? sec('Transfer Radar', `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800">${tr.map(t => `<div class="flex justify-between items-center py-3 border-b border-slate-800"><div><div class="font-bold text-sm">${esc(t.player)}</div><div class="text-xs text-slate-400">${esc(t.detail)}</div></div>${pill(esc(t.status), 'bg-blue-500/20 text-blue-300 text-[10px] font-bold uppercase')}</div>`).join('')}</div>`) : ''}
+    ${fx.length ? sec('Football Facts', grid3(fx.map((f, i) => `<div class="p-6 rounded-2xl bg-slate-900 border border-slate-800"><div class="text-3xl font-black text-blue-400">${String(i + 1).padStart(2, '0')}</div><p class="text-sm mt-2">${esc(f.text)}</p></div>`).join(''))) : ''}`;
+}
+function viewPredictions() {
+  const l = [...pub()].reverse();
+  return title('Predictions', 'Editorial picks from the BRIGHTNEWS desk.') + (l.length ? grid3(l.map(predCard).join('')) : empty('No predictions published yet.'));
+}
+function viewRecord() {
+  const p = pub(), n = r => p.filter(x => x.result === r).length, w = n('won'), l = n('lost'), pe = p.filter(x => !x.result || x.result === 'pending').length;
+  const box = (v, t, c) => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 text-center"><div class="text-xs text-slate-400">${t}</div><div class="text-3xl font-black ${c}">${v}</div></div>`;
+  const h = [...p].reverse().slice(0, 6);
+  return title('Prediction Record', 'Calculated from published predictions with verified results. Void and pending picks are excluded from the win rate.') +
+    `<div class="grid grid-cols-2 md:grid-cols-5 gap-4">${box(p.length, 'Total', '')}${box(w, 'Won', 'text-emerald-400')}${box(l, 'Lost', 'text-red-400')}${box(pe, 'Pending', 'text-amber-300')}${box(w + l ? Math.round(w / (w + l) * 100) + '%' : '-', 'Win rate', 'text-blue-400')}</div>` +
+    (h.length ? `<h2 class="text-xl font-black mt-10 mb-4">Recent History</h2>${grid3(h.map(predCard).join(''))}` : '');
+}
+function viewKits() {
+  const l = S.content.kits;
+  const link = k => /^https?:\/\//.test(k.link || '') ? `<a href="${esc(k.link)}" target="_blank" rel="noopener" class="inline-block mt-3 px-4 py-2 rounded-lg bg-blue-600 text-xs font-bold">View product</a>` : '';
+  return title('BRIGHT KITS', 'Football kits and culture apparel.') + (l.length ? grid3(l.map(k => `<div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">${img(k.image) ? `<img src="${esc(img(k.image))}" loading="lazy" alt="" class="w-full h-48 object-cover">` : ''}<div class="p-5"><h3 class="font-bold text-lg">${esc(k.name)}</h3><p class="text-sm text-slate-400 mt-1">${esc(k.desc)}</p><p class="font-black text-blue-400 mt-2">${esc(k.price)}</p>${link(k)}</div></div>`).join('')) : empty('No products yet.'));
+}
+const ADM = {
+  predictions: ['Predictions', [['competition', 'Competition'], ['match', 'Match'], ['pick', 'Pick'], ['score', 'Predicted score'], ['analysis', 'Analysis']], x => x.match],
+  featured: ['Big Match', [['match', 'Match'], ['competition', 'Competition'], ['kickoff', 'Kick-off (GMT)'], ['desc', 'Description'], ['image', 'Poster URL']], x => x.match],
+  news: ['News', [['title', 'Headline'], ['category', 'Category'], ['image', 'Image URL'], ['text', 'Article text']], x => x.title],
+  takes: ['Bright Take', [['title', 'Headline'], ['text', 'Text']], x => x.title],
+  transfers: ['Transfer Radar', [['player', 'Player'], ['detail', 'Transfer detail'], ['status', 'Status (Rumour/Confirmed)']], x => x.player],
+  players: ['Player of the Day', [['name', 'Name'], ['club', 'Club'], ['position', 'Position'], ['desc', 'Description'], ['image', 'Photo URL']], x => x.name],
+  facts: ['Football Facts', [['text', 'Fact']], x => x.text],
+  kits: ['Bright Kits', [['name', 'Product'], ['desc', 'Description'], ['price', 'Price'], ['image', 'Image URL'], ['link', 'Buy link (https://)']], x => x.name]
+};
+function viewAdmin() {
+  if (!S.token) return `<div class="max-w-md mx-auto p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-4"><h1 class="text-2xl font-black text-center">Admin Login</h1>${inp('adm-user', 'Username')}<input id="adm-pass" type="password" placeholder="Password" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm"><button onclick="login()" class="w-full py-3 rounded-xl bg-blue-600 font-bold text-sm">Sign in</button></div>`;
+  const row = (t, x) => { const p = t === 'predictions', d = x.published === 'false'; return `<div class="flex justify-between items-center gap-2 py-2 border-b border-slate-800 text-sm"><span class="truncate">${esc(ADM[t][2](x))} ${p ? resBadge(x.result) + (d ? ' <i class="text-slate-400">draft</i>' : '') : ''}</span><span class="flex gap-2 shrink-0 text-xs font-bold">${p ? `<button onclick="setRes(${x.id},'won')" class="text-emerald-400">Won</button><button onclick="setRes(${x.id},'lost')" class="text-orange-400">Lost</button><button onclick="setRes(${x.id},'void')" class="text-slate-400">Void</button><button onclick="pubToggle(${x.id},${d})" class="text-blue-400">${d ? 'Publish' : 'Unpublish'}</button>` : ''}<button onclick="delItem('${t}',${x.id})" class="text-red-400">Delete</button></span></div>`; };
+  const box = t => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><h3 class="font-black">${ADM[t][0]}</h3>${ADM[t][1].map(([k, l]) => inp(`a-${t}-${k}`, l)).join('')}${save(`addForm('${t}')`)}${[...(S.content[t] || [])].reverse().map(x => row(t, x)).join('') || '<p class="text-xs text-slate-500">Empty</p>'}</div>`;
+  return `<div class="flex justify-between items-center mb-4"><h1 class="text-3xl font-black">Admin Desk</h1><button onclick="S.token=null;render()" class="px-4 py-2 rounded-xl bg-red-600/20 text-red-400 text-xs font-bold">Logout</button></div><div class="grid md:grid-cols-3 gap-4">${Object.keys(ADM).map(box).join('')}</div>`;
+}
+function addForm(t) { const it = {}; ADM[t][1].forEach(([k]) => it[k] = $(`a-${t}-${k}`).value); if (t === 'predictions') { it.result = 'pending'; it.published = 'true'; } addItem(t, it); }
+const pubToggle = (id, draft) => adm('/api/content/predictions/' + id, 'PATCH', { published: draft ? 'true' : 'false' });
+
+// ============ STANDINGS ============
 async function loadStandings() {
   S.std = null; render();
   try { S.std = await api('/api/standings/' + S.comp); }
@@ -293,19 +456,19 @@ function pickComp(c) { S.comp = c; loadStandings(); }
 function viewStandings() {
   const chips = Object.entries(COMPS).map(([c, n]) =>
     `<button onclick="pickComp('${c}')" class="px-4 py-2 rounded-full text-xs font-bold border ${S.comp === c ? 'bg-blue-600 border-blue-500' : 'bg-slate-900 border-slate-700 text-slate-300'}">${n}</button>`).join('');
-  let body = '<p class="text-slate-400 text-sm mt-6">Memuat klasemen...</p>';
-  if (S.std?.error) body = `<p class="text-red-400 text-sm mt-6">Gagal ambil klasemen: ${esc(S.std.error)}</p>`;
+  let body = '<p class="text-slate-400 text-sm mt-6">Loading standings...</p>';
+  if (S.std?.error) body = `<p class="text-red-400 text-sm mt-6">Failed to load standings: ${esc(S.std.error)}</p>`;
   else if (S.std?.standings) {
     const tables = S.std.standings.filter(s => s.type === 'TOTAL');
     body = tables.map(t => `<div class="mt-6 rounded-2xl bg-slate-900 border border-slate-800 overflow-x-auto">
       ${t.group ? `<div class="px-4 pt-4 text-xs font-bold text-blue-400">${esc(t.group.replace('_', ' '))}</div>` : ''}
-      <table class="w-full text-sm"><thead><tr class="text-xs text-slate-400 text-center"><th class="p-3">#</th><th class="p-3 text-left">Klub</th><th>M</th><th>W</th><th>D</th><th>L</th><th>GD</th><th class="pr-4">Pts</th></tr></thead><tbody>
+      <table class="w-full text-sm"><thead><tr class="text-xs text-slate-400 text-center"><th class="p-3">#</th><th class="p-3 text-left">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th class="pr-4">Pts</th></tr></thead><tbody>
       ${t.table.map(r => `<tr class="border-t border-slate-800 text-center"><td class="p-3 text-slate-400">${r.position}</td>
         <td class="p-3 text-left"><div class="flex items-center gap-2">${crest(r.team.crest)}<span class="font-semibold">${esc(r.team.shortName || r.team.name)}</span></div></td>
         <td>${r.playedGames}</td><td>${r.won}</td><td>${r.draw}</td><td>${r.lost}</td><td>${r.goalDifference > 0 ? '+' : ''}${r.goalDifference}</td><td class="pr-4 font-black text-blue-400">${r.points}</td></tr>`).join('')}
-      </tbody></table></div>`).join('') || '<p class="text-slate-400 text-sm mt-6">Klasemen belum tersedia.</p>';
+      </tbody></table></div>`).join('') || '<p class="text-slate-400 text-sm mt-6">Standings belum tersedia.</p>';
   }
-  return `<h1 class="text-3xl font-black">Klasemen</h1><p class="text-xs text-slate-400 mb-4">Update otomatis dari data feed.</p><div class="flex gap-2 flex-wrap">${chips}</div>${body}${scorers()}`;
+  return `<h1 class="text-3xl font-black">Standings</h1><p class="text-xs text-slate-400 mb-4">Live from the football data feed.</p><div class="flex gap-2 flex-wrap">${chips}</div>${body}${scorers()}`;
 }
 
 // ============ ADMIN ============
@@ -315,6 +478,7 @@ const $v = id => $(id).value;
 
 // ============ RENDER & NAVIGASI ============
 function render() {
+  hook();
   setTimeout(() => { const qi = $('q'); if (S.fq && qi) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); S.fq = 0; } }, 0);
   ['home','matches','standings','predictions','record','kits','admin'].forEach(v => {
     $('nav-' + v).className = 'px-3 py-2 rounded-lg ' + (S.view === v ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800');
@@ -323,7 +487,7 @@ function render() {
   $('app').innerHTML = V[S.view]();
 }
 function go(v) {
-  S.view = v; S.detailId = null; render();
+  $('app').classList.remove('noanim'); S.view = v; S.detailId = null; render();
   if (v === 'standings' && !S.std) loadStandings();
 }
 
