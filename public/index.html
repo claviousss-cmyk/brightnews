@@ -183,6 +183,7 @@ function viewMatches() {
 
 // ============ DETAIL PERTANDINGAN ============
 async function openMatch(id) {
+  history.pushState({match:id}, '', '#match-' + id);
   $('app').classList.remove('noanim'); S.tab = 'sum'; S.af = null; S.sug = null; S.view = 'matches'; S.detailId = id; S.detail = null; S.detailErr = null; vt(render); window.scrollTo(0, 0);
   await loadDetail();
   loadExtras();
@@ -581,11 +582,27 @@ function go(v) {
   if (v === 'standings' && !S.std) loadStandings();
 }
 
-window.onload = () => {
-  render(); loadMatches(); loadContent();
+window.onload = async () => {
+  render();
+  await loadMatches();
+  await loadContent();
+  const hash = window.location.hash;
+  if(hash.startsWith('#match-')){
+    const id = hash.replace('#match-','');
+    if(id) openMatch(id);
+  }
   setInterval(loadMatches, 60000);
   setInterval(() => { if (S.view === 'matches' && S.detailId) loadDetail(); }, 30000);
 };
+window.addEventListener('popstate',()=>{
+ const hash=window.location.hash;
+ if(hash.startsWith('#match-')){
+   openMatch(hash.replace('#match-',''));
+ }else{
+   S.detailId=null;
+   go('matches');
+ }
+});
 </script>
 </body>
 </html>
