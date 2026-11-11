@@ -63,7 +63,7 @@ app.get('/api/h2h/:id', wrap((req) => {
 }));
 
 // ---------- Klasemen ----------
-const CODES = ['PL', 'PD', 'SA', 'BL1', 'FL1', 'CL'];
+const CODES = ['PL', 'PD', 'SA', 'BL1', 'FL1', 'CL', 'ELC', 'DED', 'PPL', 'BSA'];
 app.get('/api/standings/:code', wrap((req) => {
     if (!CODES.includes(req.params.code)) throw Object.assign(new Error('Liga tidak didukung'), { status: 400 });
     return fd(`/competitions/${req.params.code}/standings`, 300000);
@@ -171,9 +171,15 @@ const afErr = (d) => { const e = d && d.errors; if (!e) return null; const v = A
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\b(fc|cf|ac|as|sc|afc|ssc|us|rc|ud|cd|1907|1899)\b/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 const same = (a, b) => { a = norm(a); b = norm(b); if (!a || !b) return false; return a.includes(b) || b.includes(a) || a.split(' ')[0] === b.split(' ')[0]; };
 
+let afWin = null;
+const today = () => new Date().toISOString().slice(0, 10);
+const afOut = (d) => !!(afWin && afWin.day === today() && (d < afWin.from || d > afWin.to));
+const setWin = (e) => { const mm = /from (\d{4}-\d{2}-\d{2}) to (\d{4}-\d{2}-\d{2})/.exec(e); if (mm) afWin = { day: today(), from: mm[1], to: mm[2] }; };
 async function afFind(date, home, away) {
+    if (afOut(date)) return null;
     const list = await af('/fixtures?date=' + date, 3600000);
-    if (afErr(list)) return null;
+    const e0 = afErr(list);
+    if (e0) { setWin(e0); return null; }
     return (list.response || []).find(f => same(f.teams.home.name, home) && same(f.teams.away.name, away)) || null;
 }
 // Buka /api/af/status di browser untuk TES apakah API-Football lo jalan
@@ -189,9 +195,10 @@ app.get('/api/af/match', async (req, res) => {
     try {
         if (!process.env.API_FOOTBALL_KEY) return res.json({ available: false, reason: 'API_FOOTBALL_KEY belum diisi' });
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '')) return res.status(400).json({ error: 'date salah' });
+        if (afOut(date)) return res.json({ available: false, reason: 'API-Football free plan only covers ' + afWin.from + ' to ' + afWin.to });
         const list = await af('/fixtures?date=' + date, 3600000);
         const e1 = afErr(list);
-        if (e1) return res.json({ available: false, reason: e1 });
+        if (e1) { setWin(e1); return res.json({ available: false, reason: e1 }); }
         const fx = (list.response || []).find(f => same(f.teams.home.name, home) && same(f.teams.away.name, away));
         if (!fx) return res.json({ available: false, reason: 'Pertandingan ini tidak ditemukan di API-Football' });
         const live = ['1H', 'HT', '2H', 'ET', 'BT', 'P', 'LIVE'].includes(fx.fixture.status.short);
