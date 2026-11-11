@@ -170,7 +170,7 @@ function viewMatches() {
 
 // ============ DETAIL PERTANDINGAN ============
 async function openMatch(id) {
-  $('app').classList.remove('noanim'); S.tab = 'sum'; S.af = null; S.view = 'matches'; S.detailId = id; S.detail = null; S.detailErr = null; render(); window.scrollTo(0, 0);
+  $('app').classList.remove('noanim'); S.tab = 'sum'; S.af = null; S.sug = null; S.view = 'matches'; S.detailId = id; S.detail = null; S.detailErr = null; render(); window.scrollTo(0, 0);
   await loadDetail();
   loadExtras();
 }
@@ -227,8 +227,9 @@ function viewDetail() {
 }
 
 async function loadExtras() {
-  S.h2h = null; S.pos = null;
+  S.h2h = null; S.pos = null; S.sug = null;
   try { S.h2h = await api('/api/h2h/' + S.detailId); } catch (e) {}
+  try { S.sug = await api('/api/suggest/' + S.detailId); } catch (e) {}
   try {
     const c = S.detail?.competition?.code;
     if (COMPS[c]) {
@@ -240,7 +241,7 @@ async function loadExtras() {
   if (S.detailId) qr();
 }
 function extras(m) {
-  let out = '';
+  let out = sugCard(m);
   const pc = (t, r) => r ? `<div class="flex-1 text-center p-4 rounded-xl bg-slate-950/60 border border-slate-800">${crest(t.crest)}<div class="text-xs font-bold mt-1">${esc(t.shortName || t.name)}</div><div class="text-3xl font-black text-blue-400">#${r.position}</div><div class="text-[10px] text-slate-400 uppercase">${r.points} pts · ${r.playedGames} played</div></div>` : '';
   if (S.pos && (S.pos.h || S.pos.a)) out += `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800"><h3 class="font-black mb-3">League Position</h3><div class="flex gap-3 items-center">${pc(m.homeTeam, S.pos.h)}<span class="text-slate-500 font-bold">VS</span>${pc(m.awayTeam, S.pos.a)}</div></div>`;
   const ag = S.h2h?.aggregates;
@@ -442,6 +443,21 @@ function viewAdmin() {
 }
 function addForm(t) { const it = {}; ADM[t][1].forEach(([k]) => it[k] = $(`a-${t}-${k}`).value); if (t === 'predictions') { it.result = 'pending'; it.published = 'true'; } addItem(t, it); }
 const pubToggle = (id, draft) => adm('/api/content/predictions/' + id, 'PATCH', { published: draft ? 'true' : 'false' });
+
+function sugCard(m) {
+  const a = S.sug;
+  if (!a || !a.available) return '';
+  const nm = t => esc(t.shortName || t.name);
+  const seg = (v, c) => `<div class="bar flex items-center justify-center text-[11px] font-black text-white" style="width:${v}%;background:${c}">${v >= 12 ? v + '%' : ''}</div>`;
+  const row = (l, v) => `<div class="flex justify-between py-2 border-b border-slate-800 text-sm"><span class="text-slate-400">${l}</span><span class="font-bold text-right">${esc(v)}</span></div>`;
+  return `<div class="mt-4 p-6 rounded-2xl bg-slate-900 border border-slate-800">
+    <div class="flex justify-between items-center mb-4"><h3 class="font-black">Automated Analysis</h3>${pill(esc(a.confidence) + ' confidence', 'bg-blue-500/20 text-blue-300 text-[10px] font-bold uppercase')}</div>
+    <div class="flex justify-between text-xs font-bold mb-1"><span>${nm(m.homeTeam)}</span><span>Draw</span><span>${nm(m.awayTeam)}</span></div>
+    <div class="flex h-7 rounded-full overflow-hidden">${seg(a.home, '#0057B8')}${seg(a.draw, '#a9c9f3')}${seg(a.away, '#5b7196')}</div>
+    <div class="mt-4">${row('Suggested result', a.pick)}${row('Goals line', a.goals)}${row('Both teams to score', a.btts)}${row('Expected total goals', a.xg)}</div>
+    <ul class="mt-4 space-y-1 text-xs text-slate-400 list-disc pl-4">${a.basis.map(b => `<li>${esc(b)}</li>`).join('')}</ul>
+    <p class="mt-4 text-[11px] text-slate-500">Statistical suggestion built only from available data (standings, recent form, head to head). It is not a published prediction and does not guarantee any outcome.</p></div>`;
+}
 
 // ============ STANDINGS ============
 async function loadStandings() {
