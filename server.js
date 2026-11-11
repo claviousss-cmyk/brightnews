@@ -289,6 +289,17 @@ app.post('/api/content', auth, guard(async (req, res) => {
     await store.add(type, { ...clean(item), date: new Date().toISOString() });
     res.json({ success: true });
 }));
+app.put('/api/content/:type/:id', auth, guard(async (req,res)=>{
+  const {type,id}=req.params;
+  const {item}=req.body;
+  const db=await store.all();
+  const row=(db[type]||[]).find(x=>String(x.id)===String(id));
+  if(!row) return res.status(404).json({error:'Not found'});
+  Object.assign(row,item||{});
+  saveFile(db);
+  res.json({success:true,row});
+}));
+
 app.delete('/api/content/:type/:id', auth, guard(async (req, res) => {
     if (!TYPES.includes(req.params.type)) return res.status(400).json({ error: 'Invalid type' });
     await store.del(req.params.type, req.params.id);
