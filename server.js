@@ -63,6 +63,69 @@ app.get('/api/standings/:code', wrap((req) => {
     return fd(`/competitions/${req.params.code}/standings`, 300000);
 }));
 
+// ---------- Analisis otomatis (bukan prediksi resmi) ----------
+app.get('/api/suggest/:id', wrap(async (req) => {
+    const id = req.params.id;
+    if (!/^\d+$/.test(id)) throw Object.assign(new Error('ID salah'), { status: 400 });
+    const m = await fd(`/matches/${id}`, 30000);
+    const H = m.homeTeam.id, A = m.awayTeam.id;
+    const [std, fh, fa, h2h] = await Promise.all([
+        fd(`/competitions/${m.competition.code}/standings`, 300000).catch(() => null),
+        fd(`/teams/${H}/matches?status=FINISHED&limit=5`, 600000).catch(() => null),
+        fd(`/teams/${A}/matches?status=FINISHED&limit=5`, 600000).catch(() => null),
+        fd(`/matches/${id}/head2head?limit=5`, 600000).catch(() => null)
+    ]);
+    const rows = std ? (std.standings || []).filter(x => x.type === 'TOTAL').flatMap(x => x.table) : [];
+    const stat = (tid, f) => {
+        const r = rows.find(x => x.team.id === tid);
+        const s = r && r.playedGames ? { ppg: r.points / r.playedGames, gf: r.goalsFor / r.playedGames, ga: r.goalsAgainst / r.playedGames } : null;
+        let pts = 0, gf = 0, ga = 0, n = 0;
+        ((f && f.matches) || []).forEach(x => {
+            const hs = x.score.fullTime.home, as = x.score.fullTime.away;
+            if (hs == null) return;
+            const home = x.homeTeam.id === tid, me = home ? hs : as, op = home ? as : hs;
+            gf += me; ga += op; n++; pts += me > op ? 3 : me === op ? 1 : 0;
+        });
+        const fo = n ? { ppg: pts / n, gf: gf / n, ga: ga / n } : null;
+        if (!s && !fo) return null;
+        const mix = (k) => (s && fo ? s[k] * 0.55 + fo[k] * 0.45 : (s || fo)[k]);
+        return { ppg: mix('ppg'), gf: mix('gf'), ga: mix('ga') };
+    };
+    const th = stat(H, fh), ta = stat(A, fa);
+    if (!th || !ta) return { available: false };
+
+    const ag = h2h && h2h.aggregates;
+    let hh = 0, h2hText = 'Head to head: no data';
+    if (ag && ag.numberOfMatches) {
+        const hw = ag.homeTeam.id === H ? ag.homeTeam : ag.awayTeam, aw = hw === ag.homeTeam ? ag.awayTeam : ag.homeTeam;
+        hh = (hw.wins - aw.wins) / ag.numberOfMatches;
+        h2hText = `Head to head (last ${ag.numberOfMatches}): ${hw.wins}W ${hw.draws}D ${aw.wins}L for the home side`;
+    }
+    const diff = (th.ppg - ta.ppg) + 0.35 + ((th.gf - th.ga) - (ta.gf - ta.ga)) * 0.25 + hh * 0.3;
+    const pD = 0.28 - Math.min(0.12, Math.abs(diff) * 0.06);
+    const ph0 = 1 / (1 + Math.exp(-1.1 * diff));
+    const home = Math.round((1 - pD) * ph0 * 100), draw = Math.round(pD * 100), away = 100 - home - draw;
+    const ranked = [['H', home], ['D', draw], ['A', away]].sort((x, y) => y[1] - x[1]);
+    const gap = ranked[0][1] - ranked[1][1];
+    const hn = m.homeTeam.shortName || m.homeTeam.name, an = m.awayTeam.shortName || m.awayTeam.name;
+    const pick = ranked[0][0] === 'H' ? `${hn} to win` : ranked[0][0] === 'A' ? `${an} to win` : 'Draw';
+    const tot = (th.gf + ta.ga) / 2 + (ta.gf + th.ga) / 2;
+    const goals = tot >= 2.75 ? 'Over 2.5 goals' : tot <= 2.25 ? 'Under 2.5 goals' : 'Too close to call (around 2.5)';
+    const btts = (th.gf >= 1.1 && ta.gf >= 1.1 && th.ga >= 1 && ta.ga >= 1) ? 'Yes' : (th.gf < 0.9 || ta.gf < 0.9) ? 'No' : 'Uncertain';
+    const f1 = (x) => x.toFixed(1);
+    return {
+        available: true, home, draw, away, pick, goals, btts, xg: f1(tot),
+        confidence: gap >= 20 ? 'High' : gap >= 10 ? 'Medium' : 'Low',
+        basis: [
+            `Points per game (season blended with last 5): ${f1(th.ppg)} vs ${f1(ta.ppg)}`,
+            `Goals scored per game: ${f1(th.gf)} vs ${f1(ta.gf)}`,
+            `Goals conceded per game: ${f1(th.ga)} vs ${f1(ta.ga)}`,
+            h2hText,
+            'A fixed home advantage is applied to the host team'
+        ]
+    };
+}));
+
 // ---------- Form tim (5 laga terakhir) ----------
 app.get('/api/form/:id', wrap((req) => {
     if (!/^\d+$/.test(req.params.id)) throw Object.assign(new Error('ID salah'), { status: 400 });
