@@ -140,6 +140,14 @@ html.night .tabb{background:rgba(255,255,255,.07);color:#cfe0ff}
 .donut::before{content:"";position:absolute;inset:8px;border-radius:50%;background:#fff}html.night .donut::before{background:#0a2358}
 .donut span{position:relative;font-weight:800;font-size:15px}.donut.alt{background:conic-gradient(#a5b4fc calc(var(--p)*1%),rgba(125,184,255,.25) 0)}
 .donut.big{width:120px;height:120px}.donut.big span{font-size:24px}
+.arena{min-height:300px;background:#050f26;border:1px solid rgba(125,184,255,.25);box-shadow:0 30px 70px -35px rgba(0,87,184,.95)}
+.arena::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.85) 0 2px,transparent 3px),radial-gradient(rgba(180,215,255,.6) 0 1.5px,transparent 2.5px);background-size:34px 26px,57px 41px;-webkit-mask-image:linear-gradient(#000,transparent 55%);mask-image:linear-gradient(#000,transparent 55%);opacity:.35;animation:twk 2.6s ease-in-out infinite alternate}
+.aura{position:absolute;width:120%;aspect-ratio:1;max-width:440px;left:50%;top:50%;transform:translate(-50%,-50%);animation:breathe 3.5s ease-in-out infinite;pointer-events:none}
+@keyframes breathe{50%{transform:translate(-50%,-50%) scale(1.15);opacity:.8}}
+.float{animation:floaty 4s ease-in-out infinite}
+.split-line{position:absolute;left:50%;top:-10%;bottom:-10%;width:3px;transform:skewX(-14deg);background:linear-gradient(transparent,rgba(255,255,255,.95),transparent);box-shadow:0 0 18px rgba(255,255,255,.7);opacity:.7}
+.vs-big{font-size:clamp(44px,8vw,86px);line-height:1;background:linear-gradient(#fff,#9fb2d4);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
+.fchip{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
 </style>
 
 <title>BRIGHTNEWS — THE GAME, BEYOND THE SCORE</title>
@@ -262,7 +270,7 @@ function closeMatch() { history.length > 1 ? history.back() : (location.hash = '
 
 
 async function loadExtras() {
-  S.h2h = null; S.pos = null; S.sug = null; S.fan = null; loadStats(); loadForm();
+  S.h2h = null; S.pos = null; S.sug = null; S.fan = null; loadStats(); loadForm(); loadColors(S.detail);
   try { S.h2h = await api('/api/h2h/' + S.detailId); } catch (e) {}
   try { S.sug = await api('/api/suggest/' + S.detailId); } catch (e) {}
   try { S.fan = await api('/api/fan/' + S.detailId); } catch (e) {}
@@ -699,16 +707,13 @@ function viewDetail() {
   const k = kind(m), ft = m.score?.fullTime || {}, ht = m.score?.halfTime || {}, live = k === 'LIVE';
   const side = t => `<div class="flex-1 min-w-0 flex flex-col items-center gap-3 text-center"><img src="${esc(t.crest)}" alt="" class="w-16 h-16 sm:w-24 sm:h-24 object-contain" style="filter:drop-shadow(0 0 18px rgba(125,184,255,.65))"><div class="disp text-xl sm:text-3xl leading-tight max-w-full truncate">${esc(t.shortName || t.name)}</div></div>`;
   const sp = live ? `<div class="live-pill">Live · ${esc(liveText(m))}</div>` : k === 'FT' ? '<div class="ft-pill">Full Time</div>' : `<div class="ft-pill">${fmtDate(m.utcDate)} · ${gmt(m.utcDate)} GMT</div>`;
-  const board = `<section class="board relative overflow-hidden rounded-3xl p-6 sm:p-10 text-white">${bdImg()}<div class="board-shade"></div><div class="relative">
-    <div class="text-center text-xs font-bold tracking-widest uppercase opacity-90">${esc(m.competition?.name)}${m.matchday ? ' · Matchday ' + m.matchday : ''}</div>
-    ${m.venue ? `<div class="text-center text-[11px] opacity-70 mt-1">${esc(m.venue)} · ${fmtDate(m.utcDate)} · ${gmt(m.utcDate)} GMT</div>` : ''}
-    <div class="flex items-center gap-2 mt-6">${side(m.homeTeam)}<div class="text-center px-2 sm:px-8 shrink-0"><div class="score disp">${k === 'UP' || k === 'PP' ? 'VS' : (ft.home ?? 0) + ' - ' + (ft.away ?? 0)}</div><div class="mt-3">${sp}</div>${ht.home != null && k !== 'UP' ? `<div class="text-xs mt-2 opacity-70">(${ht.home} - ${ht.away})</div>` : ''}</div>${side(m.awayTeam)}</div></div></section>`;
+  const board = heroBoard(m, k, ft, ht, sp);
   const tabs = `<div class="flex flex-wrap items-center gap-2 mt-5">${[['sum', 'Overview'], ['stats', 'Statistics'], ['events', 'Events'], ['lineups', 'Lineups'], ['h2h', 'H2H']].map(([a, l]) => `<button onclick="setTab('${a}')" class="tabb ${S.tab === a ? 'on' : ''}">${l}</button>`).join('')}<span class="ml-auto flex gap-2"><button onclick="copyLink()" class="tabb">Copy link</button><button onclick="shareMatch()" class="tabb">Share image</button></span></div>`;
   const rows = [['Competition', m.competition?.name], ['Date', fmtDate(m.utcDate) + ' · ' + gmt(m.utcDate) + ' GMT'], ['Venue', m.venue], ['Referee', (m.referees || [])[0]?.name], ['Matchday', m.matchday], ['Half-time', ht.home != null ? ht.home + ' - ' + ht.away : null]].filter(x => x[1]);
   const info = `<div class="panel"><h3 class="font-black mb-2">Match Info</h3>${rows.map(([a, b]) => `<div class="flex justify-between py-2 border-b border-slate-800 text-sm gap-3"><span class="text-slate-400">${a}</span><span class="font-semibold text-right">${esc(b)}</span></div>`).join('')}</div>`;
   const formC = `<div class="panel"><h3 class="font-black mb-3">Team Form</h3>${[m.homeTeam, m.awayTeam].map(t => `<div class="mb-3"><div class="flex items-center gap-2 mb-2 text-sm font-bold">${crest(t.crest)}${nmx(t)}</div>${formChips(t)}</div>`).join('')}</div>`;
   const body = S.tab === 'stats' ? `<div class="mt-4">${statsCard(m)}</div>` : S.tab === 'events' ? `<div class="mt-4">${eventsCard(m)}</div>` : S.tab === 'lineups' ? `<div class="mt-4">${pitchCard(m)}</div>` : S.tab === 'h2h' ? extras(m) : `<div class="grid lg:grid-cols-3 gap-4 mt-4">${statsCard(m)}${eventsCard(m)}<div class="space-y-4">${formC}${info}</div></div>${fanCard(m)}${extras(m)}`;
-  return crumb + board + tabs + body;
+  return crumb + board + formStrip(m) + tabs + body;
 }
 const predStats = () => { const p = pub(), n = r => p.filter(x => x.result === r).length, w = n('won'), l = n('lost'); return { p, w, l, pe: p.filter(x => !x.result || x.result === 'pending').length, wr: w + l ? Math.round(w / (w + l) * 100) : 0 }; };
 function viewPredictions() {
@@ -723,6 +728,53 @@ function viewRecord() {
   return title('Prediction Record', 'Calculated from published predictions with verified results. Void and pending picks are excluded from the win rate.') + `<div class="grid lg:grid-cols-3 gap-4"><div class="panel flex items-center gap-6"><div class="donut big" style="--p:${wr}"><span>${wr}%</span></div><div><div class="font-black">Win rate</div><div class="text-xs text-slate-400">${w} won · ${l} lost</div></div></div><div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">${tile(p.length, 'Total', '')}${tile(w, 'Won', 'text-emerald-400')}${tile(l, 'Lost', 'text-red-400')}${tile(pe, 'Pending', 'text-amber-300')}</div></div>` + (h.length ? `<h2 class="text-xl font-black mt-10 mb-4">Recent History</h2><div class="panel">${h.map(x => `<div class="flex items-center justify-between gap-3 py-3 border-b border-slate-800 text-sm"><div class="min-w-0"><div class="font-bold truncate">${esc(x.match)}</div><div class="text-[11px] text-slate-400">${esc(x.competition)} · ${esc(x.pick)}</div></div><div class="flex items-center gap-3 shrink-0"><span class="font-bold">${esc(x.score || '')}</span>${resBadge(x.result)}</div></div>`).join('')}</div>` : '');
 }
 const adminTiles = () => { const c = S.content, p = c.predictions || [], t = (v, l) => `<div class="panel text-center"><div class="disp text-4xl text-blue-400">${v}</div><div class="text-[11px] text-slate-400 uppercase tracking-widest">${l}</div></div>`; return `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">${t(p.length, 'Predictions')}${t(p.filter(x => x.published !== 'false').length, 'Published')}${t((c.news || []).length, 'News')}${t((c.featured || []).length, 'Big matches')}</div>`; };
+
+const TEAMCOL = { 86: '245,245,255', 81: '220,38,60', 78: '220,40,40', 57: '239,1,7', 61: '30,90,220', 65: '108,171,221', 66: '218,41,28', 64: '200,16,46', 73: '240,240,255', 5: '220,5,40', 4: '253,225,0', 524: '0,90,200', 109: '240,240,240', 108: '0,100,220', 98: '220,10,20', 113: '0,150,230' };
+S.cc = {};
+const tcol = t => TEAMCOL[t.id] || S.cc[t.crest] || '125,184,255';
+async function teamColor(t) {
+  if (TEAMCOL[t.id] || S.cc[t.crest]) return;
+  S.cc[t.crest] = '207,224,255';
+  const im = await loadImg(t.crest);
+  if (!im) return;
+  try {
+    const c = document.createElement('canvas'); c.width = c.height = 40;
+    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, 40, 40);
+    const d = x.getImageData(0, 0, 40, 40).data, B = {}; let tot = 0, col = 0;
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i + 3] < 140) continue; tot++;
+      const r = d[i], g = d[i + 1], b = d[i + 2], mx = Math.max(r, g, b), sat = mx ? (mx - Math.min(r, g, b)) / mx : 0;
+      if (sat < .4 || mx < 70) continue; col++;
+      const k = (r >> 5) + ',' + (g >> 5) + ',' + (b >> 5), o = B[k] || (B[k] = { w: 0, n: 0, r: 0, g: 0, b: 0 });
+      o.w += sat; o.n++; o.r += r; o.g += g; o.b += b;
+    }
+    if (col < tot * .15) { S.cc[t.crest] = '235,242,255'; return; }
+    const o = Object.values(B).sort((p, q) => q.w - p.w)[0], v = [o.r / o.n, o.g / o.n, o.b / o.n], f = Math.min(1.6, 215 / Math.max(...v, 1));
+    S.cc[t.crest] = v.map(z => Math.min(255, Math.round(z * f))).join(',');
+  } catch (e) {}
+}
+async function loadColors(m) { if (!m) return; await Promise.all([teamColor(m.homeTeam), teamColor(m.awayTeam)]); if (S.detailId === m.id) qr(); }
+function heroBoard(m, k, ft, ht, sp) {
+  const c1 = tcol(m.homeTeam), c2 = tcol(m.awayTeam), bd = img(last(S.content.backdrops)?.image);
+  const half = (t, c) => `<div class="flex-1 min-w-0 relative flex flex-col items-center justify-center py-6"><div class="aura" style="background:radial-gradient(closest-side,rgba(${c},.75),rgba(${c},.25) 55%,transparent 75%)"></div><img src="${esc(t.crest)}" alt="" class="relative float w-28 h-28 sm:w-44 sm:h-44 object-contain" style="filter:drop-shadow(0 0 22px rgba(${c},.9))"><div class="relative disp text-xl sm:text-3xl mt-3 text-center max-w-full truncate">${esc(t.shortName || t.name)}</div></div>`;
+  const mid = k === 'UP' || k === 'PP' ? '<div class="vs-big disp">VS</div>' : `<div class="score disp">${ft.home ?? 0}<span style="opacity:.6"> - </span>${ft.away ?? 0}</div>`;
+  return `<section class="arena relative overflow-hidden rounded-3xl text-white">${bd ? `<img src="${esc(bd)}" alt="" class="absolute inset-0 w-full h-full object-cover" style="opacity:.8">` : ''}
+    <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(${c1},.45),transparent 50%,rgba(${c2},.45)),linear-gradient(180deg,rgba(4,11,31,.35),rgba(4,11,31,.7))"></div><div class="split-line"></div>
+    <div class="relative px-4 sm:px-10 pt-6 pb-8"><div class="text-center text-xs font-bold tracking-widest uppercase opacity-90">${esc(m.competition?.name)}${m.matchday ? ' · Matchday ' + m.matchday : ''}</div>${m.venue ? `<div class="text-center text-[11px] opacity-70 mt-1">${esc(m.venue)} · ${fmtDate(m.utcDate)} · ${gmt(m.utcDate)} GMT</div>` : ''}
+    <div class="flex items-center mt-4">${half(m.homeTeam, c1)}<div class="text-center px-1 sm:px-6 shrink-0 relative z-[2]">${mid}<div class="mt-3">${sp}</div>${ht.home != null && k !== 'UP' ? `<div class="text-xs mt-2 opacity-70">(${ht.home} - ${ht.away})</div>` : ''}</div>${half(m.awayTeam, c2)}</div></div></section>`;
+}
+function formChips2(t) {
+  const l = S.form[t.id];
+  if (!l) return '<div class="skel h-11 w-48 rounded-lg"></div>';
+  if (!l.length) return '<p class="text-xs text-slate-400">No form data</p>';
+  const st = { W: 'background:rgba(22,163,74,.2);color:#16a34a', D: 'background:rgba(100,116,139,.2);color:#64748b', L: 'background:rgba(220,38,38,.2);color:#dc2626' };
+  return '<div class="flex gap-2">' + [...l].sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate)).slice(-5).map(x => { const home = x.homeTeam.id === t.id, h = x.score.fullTime.home, a = x.score.fullTime.away, me = home ? h : a, op = home ? a : h, r = me > op ? 'W' : me < op ? 'L' : 'D'; return `<span class="fchip" style="${st[r]}">${r}</span>`; }).join('') + '</div>';
+}
+function formStrip(m) {
+  const a = S.sug && S.sug.available ? S.sug : null, nm = t => esc(t.shortName || t.name);
+  const col = (t, pc, r) => `<div class="flex-1 min-w-0 flex flex-col gap-4 ${r ? 'items-end text-right' : ''}">${formChips2(t)}<div class="flex items-center gap-3 ${r ? 'flex-row-reverse' : ''}"><img src="${esc(t.crest)}" class="w-12 h-12 sm:w-16 sm:h-16 object-contain" alt=""><div><div class="disp text-4xl sm:text-6xl leading-none">${a ? pc + '%' : '–'}</div><div class="text-xs sm:text-sm text-slate-400 truncate">${nm(t)} Win</div></div></div></div>`;
+  return `<div class="panel mt-4"><div class="flex gap-3 items-end">${col(m.homeTeam, a && a.home)}<div class="text-center px-2 shrink-0"><div class="disp text-4xl sm:text-6xl leading-none">${a ? a.draw + '%' : '–'}</div><div class="text-xs sm:text-sm text-slate-400">Draw</div></div>${col(m.awayTeam, a && a.away, 1)}</div>${a ? '<p class="text-[11px] text-slate-500 mt-4">Automated analysis from form, standings and head to head' + ((a.sources || []).length > 1 ? ' + API-Football' : '') + '. Not a published prediction.</p>' : ''}</div>`;
+}
 
 // ============ STANDINGS ============
 async function loadStandings() {
