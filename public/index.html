@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="theme-color" content="#0057B8">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230057B8'/%3E%3Ctext x='32' y='42' font-size='28' font-weight='800' text-anchor='middle' fill='white' font-family='Arial'%3EBN%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Barlow+Condensed:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
@@ -94,8 +96,8 @@ html.night .mc{background:rgba(0,50,130,.35);border-color:rgba(96,165,250,.28)}
 .hero-float .mc{background:rgba(6,40,94,.55)!important;border-color:rgba(255,255,255,.3)!important}
 .match-hero.hero-anim{background-image:linear-gradient(160deg,#06285e,#0057B8 60%,#0a3f8f)!important;box-shadow:0 30px 60px -30px rgba(0,87,184,.9)}
 .score{font-size:clamp(44px,9vw,92px);line-height:1;text-shadow:0 0 30px rgba(125,184,255,.8)}
-.crest-ring{width:96px;height:96px;margin:0 auto;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(255,255,255,.18),0 0 40px rgba(125,184,255,.7);animation:floaty 4s ease-in-out infinite}
-.crest-ring img{width:70%;height:70%;object-fit:contain;background:transparent}
+.crest-ring{width:96px;height:96px;margin:0 auto;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(255,255,255,.18),0 0 40px rgba(125,184,255,.7);animation:floaty 4s ease-in-out infinite}
+.crest-ring img{width:70%;height:70%;object-fit:contain}
 html.night body{background:#050f26!important}
 html.night body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(900px 500px at 15% -5%,rgba(0,87,184,.55),transparent 60%),radial-gradient(800px 500px at 95% 10%,rgba(56,189,248,.28),transparent 55%),radial-gradient(700px 600px at 50% 110%,rgba(0,87,184,.35),transparent 60%);animation:bgshift 18s ease-in-out infinite alternate}
 html.night body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(125,184,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(125,184,255,.05) 1px,transparent 1px);background-size:60px 60px;-webkit-mask-image:linear-gradient(#000,transparent 70%);mask-image:linear-gradient(#000,transparent 70%)}
@@ -196,9 +198,9 @@ button:hover{transform:none}button:active{transform:scale(.97)}
 </header>
 
 <main id="app" class="max-w-6xl mx-auto px-4 py-8 pb-28 md:pb-8"></main>
-<nav id="tabbar"><button data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg><span>Home</span></button><button data-v="matches" onclick="go('matches')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Matches</span></button><button data-v="standings" onclick="go('standings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Table</span></button><button data-v="predictions" onclick="go('predictions')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg><span>Picks</span></button><button onclick="toggleMore()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span>More</span></button></nav><div id="more" class="hidden fixed z-[70] right-3 bottom-20 rounded-2xl bg-slate-900 border border-slate-800 p-2 w-48 shadow-xl"><button onclick="go('record')" class="block w-full text-left px-4 py-3 text-sm font-bold">Record</button><button onclick="go('kits')" class="block w-full text-left px-4 py-3 text-sm font-bold">Bright Kits</button><button onclick="go('admin')" class="block w-full text-left px-4 py-3 text-sm font-bold">Admin</button><button onclick="toggleTheme()" class="block w-full text-left px-4 py-3 text-sm font-bold">Light / Dark</button></div>
+<nav id="tabbar"><button data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg><span>Home</span></button><button data-v="matches" onclick="go('matches')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Matches</span></button><button data-v="standings" onclick="go('standings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Table</span></button><button data-v="predictions" onclick="go('predictions')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg><span>Picks</span></button><button onclick="toggleMore()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span>More</span></button></nav><div id="more" class="hidden fixed z-[70] right-3 bottom-20 rounded-2xl bg-slate-900 border border-slate-800 p-2 w-48 shadow-xl"><button onclick="go('record')" class="block w-full text-left px-4 py-3 text-sm font-bold">Record</button><button onclick="go('kits')" class="block w-full text-left px-4 py-3 text-sm font-bold">Bright Kits</button><button onclick="go('admin')" class="block w-full text-left px-4 py-3 text-sm font-bold">Admin</button><button onclick="toggleTheme()" class="block w-full text-left px-4 py-3 text-sm font-bold">Light / Dark</button><button onclick="installApp()" class="block w-full text-left px-4 py-3 text-sm font-bold">Install app</button></div>
 
-<footer class="border-t border-slate-800 py-10 text-center text-xs text-slate-500"><div class="flex justify-center gap-3 mb-4"><a class="soc" href="https://instagram.com/brightnewss" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a class="soc" href="https://www.tiktok.com/@brightnewss" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M16.6 3c.3 2.3 1.7 3.8 4 3.9v3.1c-1.5 0-2.9-.5-4-1.2v6.2c0 3.2-2.6 5.5-5.6 5.5S5.4 18.2 5.4 15.2c0-3.3 2.8-5.8 6.2-5.4v3.2c-1.7-.4-3 .7-3 2.2 0 1.3 1 2.3 2.3 2.3s2.4-1 2.4-2.5V3z"/></svg></a></div><p>&copy; 2026 BRIGHTNEWS MEDIA &middot; THE GAME, BEYOND THE SCORE &middot; @brightnewss</p></footer>
+<footer class="border-t border-slate-800 py-10 text-center text-xs text-slate-500"><div class="flex justify-center gap-3 mb-4"><a class="soc" href="https://instagram.com/brightnewss" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><a class="soc" href="https://www.tiktok.com/@brightnewss" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M16.6 3c.3 2.3 1.7 3.8 4 3.9v3.1c-1.5 0-2.9-.5-4-1.2v6.2c0 3.2-2.6 5.5-5.6 5.5S5.4 18.2 5.4 15.2c0-3.3 2.8-5.8 6.2-5.4v3.2c-1.7-.4-3 .7-3 2.2 0 1.3 1 2.3 2.3 2.3s2.4-1 2.4-2.5V3z"/></svg></a></div><div class="flex justify-center gap-4 mb-3 flex-wrap font-semibold"><a href="#/page/about">About</a><a href="#/page/privacy">Privacy</a><a href="#/page/terms">Terms</a><a href="#/page/disclaimer">Disclaimer</a><a href="#/page/contact">Contact</a></div><p>&copy; 2026 BRIGHTNEWS MEDIA &middot; THE GAME, BEYOND THE SCORE &middot; @brightnewss</p></footer>
 
 <script>
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -309,7 +311,7 @@ const fv = m => (S.fav.includes(m.homeTeam.id) || S.fav.includes(m.awayTeam.id))
 function toggleFav(ev, id) { ev.stopPropagation(); S.fav = S.fav.includes(id) ? S.fav.filter(x => x !== id) : [...S.fav, id]; try { localStorage.setItem('fav', JSON.stringify(S.fav)); } catch (e) {} render(); }
 const star = id => `<button onclick="toggleFav(event,${id})" class="mr-1 ${S.fav.includes(id) ? 'text-blue-400' : 'text-slate-500'}">${STAR}</button>`;
 function toggleTheme() { const n = document.documentElement.classList.toggle('night'); try { localStorage.setItem('theme', n ? 'night' : 'day'); } catch (e) {} }
-async function loadContent() { try { S.content = await api('/api/content'); } catch (e) {} if (['home', 'predictions', 'record', 'kits'].includes(S.view) || (S.view === 'admin' && S.token)) render(); }
+async function loadContent() { try { S.content = await api('/api/content'); } catch (e) {} S.cl = true; if (['home', 'predictions', 'record', 'kits'].includes(S.view) || (S.view === 'admin' && S.token)) render(); }
 
 const empty = t => `<p class="text-slate-400 text-sm mt-6">${t}</p>`;
 const title = (h, sub) => `<h1 class="text-3xl font-black">${h}</h1><p class="text-xs text-slate-400 mb-4">${sub}</p>`;
@@ -410,14 +412,14 @@ const pri = m => { const i = ['CL', 'PL', 'SA', 'BL1', 'PD', 'FL1'].indexOf(m.co
 const STAR = '<svg viewBox="0 0 20 20" class="w-4 h-4 inline" fill="currentColor"><path d="M10 1.5l2.5 5.4 5.9.7-4.4 4 1.2 5.8L10 14.4 4.8 17.4 6 11.6 1.6 7.6l5.9-.7z"/></svg>';
 const ico = t => t === 'g' ? '<span class="ico g"></span>' : t === 'y' ? '<span class="ico y"></span>' : t === 'r' ? '<span class="ico r"></span>' : '<span class="text-[9px] font-black text-blue-400">SUB</span>';
 const IO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); IO.unobserve(e.target); } }), { threshold: .1 });
-function hook() { requestAnimationFrame(() => { document.querySelectorAll('#tabbar [data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === S.view)); const q = $('app').classList.contains('noanim'); document.querySelectorAll('.reveal').forEach(el => q ? el.classList.add('in') : IO.observe(el)); document.querySelectorAll('[data-count]').forEach(el => { const n = +el.dataset.count; if (q || !n) return; const t0 = performance.now(); const f = t => { const p = Math.min(1, (t - t0) / 900); el.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); }); }); }
-const img = u => /^https?:\/\//.test(u || '') ? u : '';
+function hook() { requestAnimationFrame(() => { document.querySelectorAll('img[data-o]').forEach(im => { const o = im.dataset.o; if (S.clean[o] === undefined) { cq = cq.then(() => cleanCrest(o)).then(() => { if (S.clean[o]) document.querySelectorAll('img[data-o]').forEach(z => { if (z.dataset.o === o) z.src = S.clean[o]; }); }); } else if (S.clean[o] && im.getAttribute('src') !== S.clean[o]) im.src = S.clean[o]; }); document.querySelectorAll('#tabbar [data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === S.view)); const q = $('app').classList.contains('noanim'); document.querySelectorAll('.reveal').forEach(el => q ? el.classList.add('in') : IO.observe(el)); document.querySelectorAll('[data-count]').forEach(el => { const n = +el.dataset.count; if (q || !n) return; const t0 = performance.now(); const f = t => { const p = Math.min(1, (t - t0) / 900); el.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); }); }); }
+const img = u => /^(https?:\/\/|\/api\/img\/)/.test(u || '') ? u : '';
 const last = a => (a || [])[(a || []).length - 1];
 const pub = () => S.content.predictions.filter(p => p.published !== 'false');
 const pill = (t, c) => `<span class="px-2 py-0.5 rounded ${c}">${t}</span>`;
 const resBadge = r => r === 'won' ? pill('WON', 'bg-emerald-500/20 text-emerald-400') : r === 'lost' ? pill('LOST', 'bg-red-500/20 text-red-400') : r === 'void' ? pill('VOID', 'bg-slate-800 text-slate-400') : pill('PENDING', 'bg-amber-500/20 text-amber-300');
 const predCard = p => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><div class="flex justify-between text-xs font-bold text-blue-400"><span>${esc(p.competition)}</span>${resBadge(p.result)}</div><h3 class="font-bold text-lg">${esc(p.match)}</h3><p class="text-sm">Pick: <b>${esc(p.pick)}</b>${p.score ? ' · Score ' + esc(p.score) : ''}</p>${p.analysis ? `<p class="text-xs text-slate-400">${esc(p.analysis)}</p>` : ''}<div class="flex justify-between items-center"><p class="text-[10px] text-slate-500">${fmtDate(p.date)}</p><button onclick="sharePred('${p.id}')" class="text-[11px] font-bold text-blue-400">Share image</button></div></div>`;
-const newsCard = n => `<div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">${img(n.image) ? `<img src="${esc(img(n.image))}" loading="lazy" alt="" class="w-full h-40 object-cover">` : ''}<div class="p-5"><p class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">${esc(n.category || 'News')}</p><h3 class="font-bold mt-1">${esc(n.title)}</h3><p class="text-sm text-slate-400 mt-2">${esc(n.text)}</p><p class="text-[10px] text-slate-500 mt-2">${fmtDate(n.date)}</p></div></div>`;
+const newsCard = n => `<div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden cursor-pointer" onclick="openNews('${n.id}')">${img(n.image) ? `<img src="${esc(img(n.image))}" loading="lazy" alt="" class="w-full h-40 object-cover">` : ''}<div class="p-5"><p class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">${esc(n.category || 'News')}</p><h3 class="font-bold mt-1">${esc(n.title)}</h3><p class="text-sm text-slate-400 mt-2">${esc(n.text)}</p><p class="text-[10px] text-slate-500 mt-2">${fmtDate(n.date)}</p></div></div>`;
 const grid3 = a => `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${a}</div>`;
 const sec = (t, inner, id = '') => `<h2 id="${id}" class="text-xl font-black mt-12 mb-4 reveal">${t}</h2><div class="reveal">${inner}</div>`;
 const orbit = '<svg class="orbit" viewBox="0 0 400 400" aria-hidden="true"><g class="o3"><circle cx="200" cy="200" r="190" fill="none" stroke="rgba(255,255,255,.18)"/><circle cx="200" cy="10" r="6" fill="#fff"/></g><g class="o1"><circle cx="200" cy="200" r="150" fill="none" stroke="rgba(255,255,255,.35)"/><circle cx="350" cy="200" r="7" fill="#fff"/></g><g class="o2"><circle cx="200" cy="200" r="105" fill="none" stroke="rgba(255,255,255,.3)" stroke-dasharray="4 8"/><circle cx="95" cy="200" r="5" fill="#bfe0ff"/></g><circle class="core" cx="200" cy="200" r="40" fill="rgba(255,255,255,.14)"/></svg>';
@@ -444,12 +446,6 @@ const ADM = {
   backdrops: ['Page Backdrop', [['image', 'Backdrop image URL']], x => x.image],
   kits: ['Bright Kits', [['name', 'Product'], ['desc', 'Description'], ['price', 'Price'], ['image', 'Image URL'], ['link', 'Buy link (https://)']], x => x.name]
 };
-function viewAdmin() {
-  if (!S.token) return `<div class="max-w-md mx-auto p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-4"><h1 class="text-2xl font-black text-center">Admin Login</h1>${inp('adm-user', 'Username')}<input id="adm-pass" type="password" placeholder="Password" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm"><button onclick="login()" class="w-full py-3 rounded-xl bg-blue-600 font-bold text-sm">Sign in</button></div>`;
-  const row = (t, x) => { const p = t === 'predictions', d = x.published === 'false'; return `<div class="flex justify-between items-center gap-2 py-2 border-b border-slate-800 text-sm"><span class="truncate">${esc(ADM[t][2](x))} ${p ? resBadge(x.result) + (d ? ' <i class="text-slate-400">draft</i>' : '') : ''}</span><span class="flex gap-2 shrink-0 text-xs font-bold">${p ? `<button onclick="setRes(${x.id},'won')" class="text-emerald-400">Won</button><button onclick="setRes(${x.id},'lost')" class="text-orange-400">Lost</button><button onclick="setRes(${x.id},'void')" class="text-slate-400">Void</button><button onclick="pubToggle(${x.id},${d})" class="text-blue-400">${d ? 'Publish' : 'Unpublish'}</button>` : ''}<button onclick="editItem('${t}',${x.id})" class="text-blue-400">Edit</button><button onclick="delItem('${t}',${x.id})" class="text-red-400">Delete</button></span></div>`; };
-  const box = t => `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2"><h3 class="font-black">${ADM[t][0]}${S.edit && S.edit.t === t ? ' <span class="text-xs text-blue-400">editing</span> <button onclick="S.edit=null;qr()" class="text-xs text-red-400">cancel</button>' : ''}</h3>${ADM[t][1].map(([k, l]) => inp(`a-${t}-${k}`, l, edv(t, k))).join('')}${save(`addForm('${t}')`)}${[...(S.content[t] || [])].reverse().map(x => row(t, x)).join('') || '<p class="text-xs text-slate-500">Empty</p>'}</div>`;
-  return `<div class="flex justify-between items-center mb-4"><h1 class="text-3xl font-black">Admin Desk</h1><button onclick="S.token=null;render()" class="px-4 py-2 rounded-xl bg-red-600/20 text-red-400 text-xs font-bold">Logout</button></div>${adminTiles()}${healthBox()}<div class="grid md:grid-cols-3 gap-4">${Object.keys(ADM).map(box).join('')}</div>`;
-}
 function addForm(t) {
   const it = {}; ADM[t][1].forEach(([k]) => it[k] = $(`a-${t}-${k}`).value);
   if (S.edit && S.edit.t === t) { const id = S.edit.id; S.edit = null; return adm(`/api/content/${t}/${id}`, 'PUT', { item: it }); }
@@ -531,34 +527,15 @@ function showShare(blob, fname) {
   d.querySelector('#shx').onclick = () => d.remove(); d.onclick = e => { if (e.target === d) d.remove(); };
   const sb = d.querySelector('#shb'); if (sb) sb.onclick = () => navigator.share({ files: [file], title: 'BRIGHTNEWS' }).catch(() => {});
 }
-function shareMatch() {
-  const m = S.detail; if (!m) return; const k = kind(m), ft = m.score?.fullTime || {}, nm = t => t.shortName || t.name;
-  shareImage({ comp: m.competition?.name, status: k === 'LIVE' ? 'LIVE ' + liveText(m) : k === 'FT' ? 'FULL TIME' : fmtDate(m.utcDate) + ' · ' + gmt(m.utcDate) + ' GMT',
-    teams: [{ name: nm(m.homeTeam), crest: m.homeTeam.crest }, { name: nm(m.awayTeam), crest: m.awayTeam.crest }],
-    center: k === 'UP' || k === 'PP' ? 'VS' : (ft.home ?? 0) + ' - ' + (ft.away ?? 0),
-    lines: S.sug && S.sug.available ? [{ t: 'Automated analysis: ' + S.sug.pick, size: 34, c: '#0057B8', w: 800 }, { t: S.sug.home + '% · ' + S.sug.draw + '% · ' + S.sug.away + '%', size: 30, c: '#5b7196' }] : [] }, 'brightnews-match.png');
-}
-function sharePred(id) {
-  const p = S.content.predictions.find(x => String(x.id) === String(id)); if (!p) return;
-  shareImage({ comp: p.competition, status: 'BRIGHTNEWS PREDICTION', lines: [{ t: p.match, size: 56, w: 800, max: 3 }, { t: 'PICK', size: 24, c: '#5b7196' }, { t: p.pick, size: 64, w: 800, c: '#0057B8', max: 2 }, { t: p.score ? 'Predicted score ' + p.score : '', size: 34 }, { t: p.analysis, size: 28, c: '#5b7196', max: 5 }, { t: 'Result: ' + String(p.result || 'pending').toUpperCase(), size: 30, w: 800 }] }, 'brightnews-prediction.png');
-}
 
 S.fi = 0; S.fan = null; S.edit = null;
 const edv = (t, k) => { if (!S.edit || S.edit.t !== t) return ''; const it = (S.content[t] || []).find(x => String(x.id) === String(S.edit.id)); return it ? it[k] || '' : ''; };
 const editItem = (t, id) => { S.edit = { t, id }; qr(); window.scrollTo(0, 0); };
 async function exportBackup() { try { const d = await (await fetch('/api/content', { headers: hdr() })).json(); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' })); a.download = 'brightnews-backup-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); } catch (e) { alert('Backup failed'); } }
-function applyRoute() {
-  const h = location.hash.replace(/^#\/?/, '').split('/'), v = h[0] || 'home';
-  $('app').classList.remove('noanim'); $('more').classList.add('hidden');
-  if (v === 'match' && /^\d+$/.test(h[1] || '')) { loadMatchPage(+h[1]); return; }
-  S.view = ['home', 'matches', 'standings', 'predictions', 'record', 'kits', 'admin'].includes(v) ? v : 'home'; S.detailId = null;
-  vt(render); window.scrollTo(0, 0);
-  if (S.view === 'standings' && !S.std) loadStandings();
-}
 function go(v) { if (location.hash === '#/' + v) applyRoute(); else location.hash = '#/' + v; }
 const openMatch = id => { location.hash = '#/match/' + id; };
 window.addEventListener('hashchange', applyRoute);
-async function copyLink() { try { await navigator.clipboard.writeText(location.href); alert('Link copied'); } catch (e) { prompt('Copy this link', location.href); } }
+async function copyLink() { try { await navigator.clipboard.writeText(shareUrl()); alert('Link copied'); } catch (e) { prompt('Copy this link', shareUrl()); } }
 function strip() {
   const o = { LIVE: 0, UP: 1, FT: 2 };
   const l = S.matches.filter(m => kind(m) !== 'PP' && ldate(m) === S.day).sort((a, b) => (o[kind(a)] - o[kind(b)]) || pri(a) - pri(b)).slice(0, 12);
@@ -645,7 +622,7 @@ function viewHome() {
   const fc = bm ? ['BIG MATCH', bm.match, bm.desc, bm.image, bm.competition + ' · ' + bm.kickoff] : tk ? ['BRIGHT TAKE', tk.title, tk.text] : ln ? [(ln.category || 'NEWS').toUpperCase(), ln.title, ln.text, ln.image, ago(ln.date)] : null;
   const fcHtml = fc ? `<div class="rounded-xl h-40 nimg">${img(fc[3]) ? `<img src="${esc(img(fc[3]))}" loading="lazy" alt="" class="w-full h-full object-cover">` : ''}</div><p class="text-[10px] font-black tracking-widest text-blue-400 mt-3">${esc(fc[0])}</p><h3 class="disp text-2xl leading-tight mt-1">${esc(fc[1])}</h3><p class="text-sm text-slate-400 mt-1">${esc(fc[2] || '')}</p>${fc[4] ? `<p class="text-xs font-bold mt-2">${esc(fc[4])}</p>` : ''}` : '<p class="text-sm text-slate-400">Editor picks will show up here soon.</p>';
   const news = [...c.news].reverse().slice(0, 3), preds = [...pub()].reverse().slice(0, 3), tr = [...(c.transfers || [])].reverse().slice(0, 4), fx = [...(c.facts || [])].reverse().slice(0, 3);
-  const newsHtml = news.map(n => `<div class="flex gap-3 py-3 border-b border-slate-800"><div class="w-24 h-16 rounded-lg shrink-0 nimg">${img(n.image) ? `<img src="${esc(img(n.image))}" loading="lazy" alt="" class="w-full h-full object-cover">` : ''}</div><div><p class="text-sm font-bold leading-snug">${esc(n.title)}</p><p class="text-[11px] text-slate-400 mt-1">${esc(n.category || 'News')} · ${ago(n.date)}</p></div></div>`).join('');
+  const newsHtml = news.map(n => `<div class="flex gap-3 py-3 border-b border-slate-800 cursor-pointer" onclick="openNews('${n.id}')"><div class="w-24 h-16 rounded-lg shrink-0 nimg">${img(n.image) ? `<img src="${esc(img(n.image))}" loading="lazy" alt="" class="w-full h-full object-cover">` : ''}</div><div><p class="text-sm font-bold leading-snug">${esc(n.title)}</p><p class="text-[11px] text-slate-400 mt-1">${esc(n.category || 'News')} · ${ago(n.date)}</p></div></div>`).join('');
   const take = tk ? `<div class="panel"><p class="text-xs font-bold tracking-widest text-blue-400 mb-2">BRIGHT TAKE</p><h3 class="disp text-3xl">${esc(tk.title)}</h3><p class="text-sm text-slate-400 mt-2">${esc(tk.text)}</p></div>` : '';
   const ply = pl ? `<div class="panel flex gap-5 items-center">${img(pl.image) ? `<img src="${esc(img(pl.image))}" loading="lazy" alt="" class="w-24 h-24 rounded-full object-cover">` : ''}<div><p class="text-xs font-bold tracking-widest text-blue-400">PLAYER OF THE DAY</p><h3 class="disp text-2xl">${esc(pl.name)}</h3><p class="text-xs text-slate-400">${esc(pl.club)} · ${esc(pl.position)}</p><p class="text-sm mt-1">${esc(pl.desc)}</p></div></div>` : '';
   const tiles = [['BRIGHT TAKE', 'In-depth analysis', IC('<path d="M21 12a8 8 0 01-11.5 7.2L4 20l1-4.5A8 8 0 1121 12z"/>'), "goSec('sec-take')"], ['PREDICTIONS', 'Expert tips', IC('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>'), "go('predictions')"], ['RECORD', 'Performance stats', IC('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'), "go('record')"], ['TRANSFER RADAR', 'Latest rumours', IC('<path d="M4 8h14l-3-3M20 16H6l3 3"/>'), "goSec('sec-transfer')"], ['PLAYER OF THE DAY', 'Star spotlight', IC('<path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.8l-5.4 2.8 1.1-6L3.2 9.4l6.1-.8z"/>'), "goSec('sec-take')"], ['BRIGHT KITS', 'Shop the look', IC('<path d="M8 3L3 6l2.5 4L8 9v12h8V9l2.5 1L21 6l-5-3a4 4 0 01-8 0z"/>'), "go('kits')"]].map(([a, b, i, f]) => `<button class="tile reveal" onclick="${f}">${i}<b>${a}</b><small>${b}</small></button>`).join('');
@@ -721,12 +698,7 @@ function viewPredictions() {
   const { p, wr } = predStats(), f = S.pf;
   const list = [...p].reverse().filter(x => f === 'all' || (f === 'pending' ? (!x.result || x.result === 'pending') : x.result === f));
   const tabs = [['all', 'All Predictions'], ['pending', 'Pending'], ['won', 'Won'], ['lost', 'Lost']].map(([k, l]) => `<button onclick="S.pf='${k}';render()" class="tabb ${f === k ? 'on' : ''}">${l}</button>`).join('');
-  return `<section class="page-hero relative overflow-hidden rounded-3xl p-8 sm:p-12 text-white">${bdImg()}<div class="board-shade"></div><div class="relative flex flex-wrap items-center justify-between gap-6"><div><h1 class="disp text-5xl sm:text-7xl">Predictions</h1><p class="text-sm opacity-80 mt-1">Expert insights. Data-driven predictions.</p></div><div class="glassbox text-center"><div class="text-[10px] tracking-widest opacity-80">WIN RATE</div><div class="disp text-5xl">${wr}%</div></div></div></section><div class="flex flex-wrap gap-2 mt-5">${tabs}</div>${list.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">${list.map(predCard).join('')}</div>` : empty('No predictions in this category.')}`;
-}
-function viewRecord() {
-  const { p, w, l, pe, wr } = predStats(), h = [...p].reverse().slice(0, 8);
-  const tile = (v, t, c) => `<div class="panel text-center"><div class="disp text-4xl ${c}">${v}</div><div class="text-[11px] text-slate-400 uppercase tracking-widest">${t}</div></div>`;
-  return title('Prediction Record', 'Calculated from published predictions with verified results. Void and pending picks are excluded from the win rate.') + `<div class="grid lg:grid-cols-3 gap-4"><div class="panel flex items-center gap-6"><div class="donut big" style="--p:${wr}"><span>${wr}%</span></div><div><div class="font-black">Win rate</div><div class="text-xs text-slate-400">${w} won · ${l} lost</div></div></div><div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">${tile(p.length, 'Total', '')}${tile(w, 'Won', 'text-emerald-400')}${tile(l, 'Lost', 'text-red-400')}${tile(pe, 'Pending', 'text-amber-300')}</div></div>` + (h.length ? `<h2 class="text-xl font-black mt-10 mb-4">Recent History</h2><div class="panel">${h.map(x => `<div class="flex items-center justify-between gap-3 py-3 border-b border-slate-800 text-sm"><div class="min-w-0"><div class="font-bold truncate">${esc(x.match)}</div><div class="text-[11px] text-slate-400">${esc(x.competition)} · ${esc(x.pick)}</div></div><div class="flex items-center gap-3 shrink-0"><span class="font-bold">${esc(x.score || '')}</span>${resBadge(x.result)}</div></div>`).join('')}</div>` : '');
+  return `<section class="page-hero relative overflow-hidden rounded-3xl p-8 sm:p-12 text-white">${bdImg()}<div class="board-shade"></div><div class="relative flex flex-wrap items-center justify-between gap-6"><div><h1 class="disp text-5xl sm:text-7xl">Predictions</h1><p class="text-sm opacity-80 mt-1">Expert insights. Data-driven predictions.</p></div><div class="glassbox text-center"><div class="text-[10px] tracking-widest opacity-80">WIN RATE</div><div class="disp text-5xl">${wr}%</div></div></div></section><div class="flex flex-wrap gap-2 mt-5">${tabs}</div>${list.length ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">${list.map(predCard).join('')}</div>` : empty('No predictions in this category.')}${DISC}`;
 }
 const adminTiles = () => { const c = S.content, p = c.predictions || [], t = (v, l) => `<div class="panel text-center"><div class="disp text-4xl text-blue-400">${v}</div><div class="text-[11px] text-slate-400 uppercase tracking-widest">${l}</div></div>`; return `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">${t(p.length, 'Predictions')}${t(p.filter(x => x.published !== 'false').length, 'Published')}${t((c.news || []).length, 'News')}${t((c.featured || []).length, 'Big matches')}</div>`; };
 
@@ -754,10 +726,10 @@ async function teamColor(t) {
     S.cc[t.crest] = v.map(z => Math.min(255, Math.round(z * f))).join(',');
   } catch (e) {}
 }
-async function loadColors(m) { if (!m) return; await Promise.all([teamColor(m.homeTeam), teamColor(m.awayTeam)]); if (S.detailId === m.id) qr(); }
+async function loadColors(m) { if (!m) return; await Promise.all([teamColor(m.homeTeam), teamColor(m.awayTeam), cleanCrest(m.homeTeam.crest), cleanCrest(m.awayTeam.crest)]); if (S.detailId === m.id) qr(); }
 function heroBoard(m, k, ft, ht, sp) {
   const c1 = softc(tcol(m.homeTeam)), c2 = softc(tcol(m.awayTeam)), bd = img(last(S.content.backdrops)?.image);
-  const half = (t, c) => `<div class="flex-1 min-w-0 relative flex flex-col items-center justify-center py-8"><div class="aura" style="--c:${c}"></div><div class="relative">${ci(t.crest, 'crest-in w-28 h-28 sm:w-44 sm:h-44 object-contain', 'filter:drop-shadow(0 12px 16px rgba(0,0,0,.55)) drop-shadow(0 0 8px rgba(' + c + ',.3))')}<span class="crest-floor" style="--c:${c}"></span></div><div class="relative disp text-xl sm:text-3xl mt-5 text-center max-w-full truncate">${esc(t.shortName || t.name)}</div></div>`;
+  const half = (t, c) => `<div class="flex-1 min-w-0 relative flex flex-col items-center justify-center py-8"><div class="aura" style="--c:${c}"></div><div class="relative">${ci(t.crest, 'crest-in w-28 h-28 sm:w-44 sm:h-44 object-contain', 'filter:drop-shadow(0 12px 16px rgba(0,0,0,.55)) drop-shadow(0 0 8px rgba(' + c + ',.3))')}<span class="crest-floor" style="--c:${c}"></span></div><div class="relative disp text-xl sm:text-3xl mt-5 text-center max-w-full truncate cursor-pointer" onclick="location.hash='#/team/${t.id}'">${esc(t.shortName || t.name)}</div></div>`;
   const mid = k === 'UP' || k === 'PP' ? '<div class="vs-big disp">VS</div>' : `<div class="score disp">${ft.home ?? 0}<span style="opacity:.6"> - </span>${ft.away ?? 0}</div>`;
   return `<section class="arena relative overflow-hidden rounded-3xl text-white">${bd ? `<img src="${esc(bd)}" alt="" class="absolute inset-0 w-full h-full object-cover" style="opacity:.8">` : ''}
     <div class="absolute inset-0" style="background:radial-gradient(60% 90% at 0% 100%,rgba(${c1},.2),transparent 70%),radial-gradient(60% 90% at 100% 100%,rgba(${c2},.2),transparent 70%),radial-gradient(ellipse at center,transparent 35%,rgba(4,11,31,.55)),linear-gradient(180deg,rgba(4,11,31,.4),rgba(4,11,31,.78))"></div><div class="split-line"></div>
@@ -781,7 +753,7 @@ S.flash = {};
 function mrowL(m) {
   const k = kind(m), sc = m.score?.fullTime || {}, fl = S.flash[m.id] && Date.now() - S.flash[m.id] < 8000, live = k === 'LIVE';
   const st = live ? `<span class="livebadge text-red-400 font-bold">${minuteOf(m)}</span>` : k === 'FT' ? '<span class="text-slate-400">FT</span>' : k === 'PP' ? '<span class="text-amber-500">PP</span>' : `<span>${gmt(m.utcDate)}</span>`;
-  const team = (t, r) => `<div class="flex items-center gap-2 min-w-0 ${r ? 'flex-row-reverse text-right' : ''}"><span class="hov ${S.fav.includes(t.id) ? 'fv' : ''}">${star(t.id)}</span>${crest(t.crest)}<span class="truncate font-semibold">${nmT(t)}</span></div>`;
+  const team = (t, r) => `<div class="flex items-center gap-2 min-w-0 ${r ? 'flex-row-reverse text-right' : ''}"><span class="hov ${S.fav.includes(t.id) ? 'fv' : ''}">${star(t.id)}</span>${crest(t.crest)}<span class="truncate font-semibold hover:underline" onclick="event.stopPropagation();location.hash='#/team/${t.id}'">${nmT(t)}</span></div>`;
   return `<div class="mr" onclick="openMatch(${m.id})"><div class="text-xs text-slate-400 font-semibold">${st}</div>${team(m.homeTeam)}<div class="sc ${live ? 'lv' : ''} ${fl ? 'goal' : ''}">${k === 'UP' || k === 'PP' ? 'v' : (sc.home ?? 0) + ' - ' + (sc.away ?? 0)}</div>${team(m.awayTeam, 1)}</div>`;
 }
 function groupList(list) {
@@ -804,9 +776,198 @@ function viewMatches() {
   return `<div class="flex items-end justify-between gap-3 flex-wrap"><h1 class="disp text-5xl sm:text-6xl leading-none">Matches</h1><p class="text-xs text-slate-400">Kick-off times in GMT · updates every minute</p></div>${dayChips()}<input id="q" value="${esc(S.q)}" oninput="S.q=this.value;S.fq=1;qr()" placeholder="Search teams..." class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-sm mt-3"><div class="flex flex-wrap gap-2 mt-3">${chips}</div>${lchips ? `<div class="flex flex-wrap gap-2 mt-2">${lchips}</div>` : ''}${body}`;
 }
 const hd = u => (u && u.includes('crests.football-data.org') && /\.png(\?.*)?$/i.test(u)) ? u.replace(/\.png/i, '.svg') : u;
-const ci = (u, cls, style = '') => `<img src="${esc(hd(u))}" data-o="${esc(u)}" onerror="crestFb(this)" class="${cls}" style="${style}" alt="" decoding="async">`;
+const ci = (u, cls, style = '') => `<img src="${esc(S.clean[u] || hd(u))}" data-o="${esc(u)}" onerror="crestFb(this)" class="${cls}" style="${style}" alt="" decoding="async">`;
 function crestFb(el) { if (el.dataset.f) return; el.dataset.f = 1; el.src = el.dataset.o; }
 const softc = c => c.split(',').map(Number).every(x => x > 195) ? '150,185,235' : c;
+S.clean = {}; S.score = null; S.tnext = null; S.asec = 'overview'; S.cl = false;
+let cq = Promise.resolve();
+async function cleanCrest(u) {
+  if (!u || S.clean[u] !== undefined) return;
+  S.clean[u] = null;
+  const im = await loadImg(u); if (!im) return;
+  try {
+    const W = 384, c = document.createElement('canvas'); c.width = c.height = W;
+    const x = c.getContext('2d', { willReadFrequently: true }), r = Math.min(W / im.naturalWidth, W / im.naturalHeight), w = Math.round(im.naturalWidth * r), h = Math.round(im.naturalHeight * r), ox = Math.floor((W - w) / 2), oy = Math.floor((W - h) / 2);
+    x.drawImage(im, ox, oy, w, h);
+    const d = x.getImageData(0, 0, W, W), p = d.data, wh = i => p[i + 3] > 200 && p[i] > 225 && p[i + 1] > 225 && p[i + 2] > 225;
+    const seeds = [[ox, oy], [ox + w - 1, oy], [ox, oy + h - 1], [ox + w - 1, oy + h - 1]].filter(([a, b]) => wh((b * W + a) * 4));
+    if (seeds.length < 3) return;
+    const seen = new Uint8Array(W * W), st = [...seeds];
+    while (st.length) {
+      const [a, b] = st.pop(); if (a < ox || b < oy || a >= ox + w || b >= oy + h) continue;
+      const k = b * W + a; if (seen[k]) continue; const i = k * 4;
+      if (!(p[i + 3] > 20 && p[i] > 215 && p[i + 1] > 215 && p[i + 2] > 215)) continue;
+      seen[k] = 1; p[i + 3] = 0; st.push([a + 1, b], [a - 1, b], [a, b + 1], [a, b - 1]);
+    }
+    x.putImageData(d, 0, 0);
+    const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+    if (blob) S.clean[u] = URL.createObjectURL(blob);
+  } catch (e) {}
+}
+const shareUrl = () => { const h = location.hash.replace(/^#\/?/, '').split('/'); return ['match', 'news', 'team'].includes(h[0]) && h[1] ? location.origin + '/share/' + h[0] + '/' + h[1] : location.href; };
+const openNews = id => { location.hash = '#/news/' + id; };
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); S.pwa = e; });
+const installApp = () => S.pwa ? (S.pwa.prompt(), S.pwa = null) : alert('Open your browser menu and choose "Add to Home screen" or "Install app".');
+const DISC = '<p class="text-[11px] text-slate-500 mt-8">Predictions and automated analyses are opinions and statistical suggestions for information and entertainment only. They are not betting advice and no outcome is guaranteed. <a href="#/page/disclaimer" class="underline">Read the disclaimer</a>.</p>';
+const LEGAL = {
+  about: ['About BRIGHTNEWS', ['BRIGHTNEWS is a football media project built around one idea: THE GAME, BEYOND THE SCORE.', 'We bring live scores, match centres, editorial predictions and football culture together in one place.', 'Match data comes from football-data.org and API-Football. Editorial content is written and published by the BRIGHTNEWS team.']],
+  disclaimer: ['Disclaimer', ['Predictions and automated analyses on BRIGHTNEWS are opinions and statistical suggestions for information and entertainment only.', 'They are not betting advice and no outcome is guaranteed. Past accuracy does not predict future results.', 'Live data can be delayed or incomplete. Always check official sources for anything important.', 'If you choose to gamble, do so responsibly and only where it is legal.']],
+  privacy: ['Privacy', ['BRIGHTNEWS does not ask visitors for an account. Your favourite teams, theme choice and fan votes are stored in your own browser.', 'Fan Prediction votes are counted per match, and a technical identifier such as your IP address is used briefly to prevent repeat voting. We do not sell personal data.', 'We may use privacy-friendly analytics to learn which pages are popular. If that changes, this page will be updated.']],
+  terms: ['Terms of Use', ['By using BRIGHTNEWS you agree to use the site lawfully and not to scrape it or overload it.', 'Team names, logos and match data belong to their owners and data providers and are shown for information.', 'We may change or remove content at any time. The site is provided as is, without warranties.']],
+  contact: ['Contact', ['Reach the BRIGHTNEWS team on Instagram and TikTok: @brightnewss.']]
+};
+function applyRoute() {
+  const h = location.hash.replace(/^#\/?/, '').split('/'), v = h[0] || 'home', nm = /^\d+$/.test(h[1] || '');
+  $('app').classList.remove('noanim'); $('more').classList.add('hidden');
+  document.title = 'BRIGHTNEWS - THE GAME, BEYOND THE SCORE';
+  if (v === 'match' && nm) { loadMatchPage(+h[1]); return; }
+  S.detailId = null;
+  if (v === 'news' && nm) { S.view = 'article'; S.aid = h[1]; }
+  else if (v === 'team' && nm) { S.view = 'team'; S.team = null; S.tnext = null; S.tid = +h[1]; loadTeam(+h[1]); }
+  else if (v === 'page' && LEGAL[h[1]]) { S.view = 'page'; S.page = h[1]; }
+  else S.view = ['home', 'matches', 'standings', 'predictions', 'record', 'kits', 'admin'].includes(v) ? v : 'home';
+  vt(render); window.scrollTo(0, 0);
+  if (S.view === 'standings' && !S.std) loadStandings();
+  if (S.view === 'record') loadScore();
+}
+function viewPage() { const p = LEGAL[S.page] || LEGAL.about; return `<article class="max-w-2xl"><h1 class="disp text-5xl mb-6">${p[0]}</h1>${p[1].map(x => `<p class="mb-4 leading-relaxed">${esc(x)}</p>`).join('')}</article>`; }
+const backBtn = '<button onclick="history.length>1?history.back():(location.hash=\'#/home\')" class="px-4 py-2 rounded-lg bg-slate-800 text-xs font-bold mb-4">← Back</button>';
+function viewArticle() {
+  const all = S.content.news || [], n = all.find(x => String(x.id) === String(S.aid));
+  if (!n) return backBtn + (S.cl ? empty('Story not found.') : skel(1));
+  document.title = n.title + ' | BRIGHTNEWS';
+  const rel = all.filter(x => x !== n).sort((a, b) => (b.category === n.category) - (a.category === n.category) || b.id - a.id).slice(0, 3);
+  return `${backBtn}<article class="max-w-3xl mx-auto">${img(n.image) ? `<img src="${esc(img(n.image))}" alt="" class="w-full rounded-2xl mb-6 max-h-[420px] object-cover">` : ''}<p class="text-[11px] font-black tracking-widest text-blue-400 uppercase">${esc(n.category || 'News')} · ${fmtDate(n.date)}</p><h1 class="disp text-4xl sm:text-6xl leading-[1.02] mt-2 mb-6">${esc(n.title)}</h1>${String(n.text || '').split(/\n+/).map(p => `<p class="mb-4 leading-relaxed text-lg">${esc(p)}</p>`).join('')}<button onclick="copyLink()" class="tabb mt-2">Copy link</button></article>${rel.length ? sec('More stories', grid3(rel.map(newsCard).join(''))) : ''}`;
+}
+async function loadTeam(id) {
+  try { S.team = await api('/api/team/' + id); } catch (e) { S.team = { error: e.message }; }
+  if (S.view === 'team' && S.tid === id) qr();
+  try { S.tnext = (await api('/api/team/' + id + '/next')).matches || []; } catch (e) { S.tnext = []; }
+  if (!S.form[id]) { try { S.form[id] = (await api('/api/form/' + id)).matches || []; } catch (e) { S.form[id] = []; } }
+  if (S.view === 'team' && S.tid === id) qr();
+  if (S.team && !S.team.error) teamColor(S.team).then(() => { if (S.view === 'team' && S.tid === id) qr(); });
+}
+function viewTeam() {
+  const t = S.team;
+  if (!t) return backBtn + skel(2);
+  if (t.error) return backBtn + `<p class="text-red-400 text-sm">Could not load this team: ${esc(t.error)}</p>`;
+  const c = softc(tcol(t)), pos = {}, order = ['Goalkeeper', 'Defence', 'Midfield', 'Offence'];
+  (t.squad || []).forEach(p => (pos[p.position || 'Squad'] = pos[p.position || 'Squad'] || []).push(p));
+  const squad = Object.keys(pos).sort((a, b) => (order.indexOf(a) + 1 || 9) - (order.indexOf(b) + 1 || 9)).map(k => `<div><p class="text-[11px] font-black tracking-widest text-blue-400 mb-1 uppercase">${esc(k)}</p>${pos[k].map(p => `<div class="flex justify-between py-1.5 border-b border-slate-800 text-sm"><span>${esc(p.name)}</span><span class="text-slate-400 text-xs">${esc(p.nationality || '')}</span></div>`).join('')}</div>`).join('');
+  const last5 = [...(S.form[t.id] || [])].sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
+  return `${backBtn}<section class="board relative overflow-hidden rounded-3xl p-6 sm:p-10 text-white"><div class="board-shade"></div><div class="aura" style="--c:${c};left:18%;top:50%"></div><div class="relative flex items-center gap-5 sm:gap-8">${ci(t.crest, 'w-24 h-24 sm:w-40 sm:h-40 object-contain', 'filter:drop-shadow(0 12px 16px rgba(0,0,0,.55))')}<div class="min-w-0"><h1 class="disp text-4xl sm:text-6xl leading-none">${esc(t.name)}</h1><p class="text-sm opacity-80 mt-2">${[t.area?.name, t.founded ? 'Founded ' + t.founded : '', t.venue].filter(Boolean).map(esc).join(' · ')}</p><div class="mt-4 flex gap-2 items-center">${star(t.id)}<span class="text-xs opacity-80">${S.fav.includes(t.id) ? 'In your favourites' : 'Add to favourites'}</span></div></div></div></section>
+  <div class="grid lg:grid-cols-3 gap-4 mt-4"><div class="lg:col-span-2 space-y-4"><div class="panel"><h2 class="text-lg font-black mb-2">Next fixtures</h2>${S.tnext === null ? skel(1) : S.tnext.length ? S.tnext.map(mrowL).join('') : '<p class="text-sm text-slate-400">No upcoming fixtures found.</p>'}</div><div class="panel"><h2 class="text-lg font-black mb-2">Recent results</h2>${last5.length ? last5.map(mrowL).join('') : '<p class="text-sm text-slate-400">No recent results found.</p>'}</div></div><div class="panel"><h2 class="text-lg font-black mb-1">Squad</h2>${t.coach?.name ? `<p class="text-xs text-slate-400 mb-3">Coach: ${esc(t.coach.name)}</p>` : ''}<div class="space-y-4">${squad || '<p class="text-sm text-slate-400">Squad not available.</p>'}</div></div></div>`;
+}
+async function loadScore() { try { S.score = await api('/api/scorecard'); } catch (e) { S.score = { error: true }; } if (S.view === 'record') qr(); }
+function scoreCard() {
+  const s = S.score, box = inner => `<div class="panel mt-8"><h2 class="text-lg font-black mb-1">Automated Analysis Scorecard</h2><p class="text-xs text-slate-400 mb-4">Every automated analysis is saved before kick-off and checked against the final result. Small samples are noisy, so read the trend, not a single number.</p>${inner}</div>`;
+  if (!s) return box(skel(1));
+  if (s.error) return '';
+  const pc = (a, b) => b ? Math.round(a / b * 100) : 0, lab = { H: 'Home win', D: 'Draw', A: 'Away win' };
+  if (!s.total) return box(`<p class="text-sm text-slate-400">No analyses have been settled yet${s.pending ? ' (' + s.pending + ' waiting for full time)' : ''}. Results appear here after the matches finish.</p>`);
+  const tile = (v, t) => `<div class="text-center"><div class="disp text-3xl">${v}</div><div class="text-[10px] uppercase tracking-widest text-slate-400">${t}</div></div>`;
+  const rows = ['High', 'Medium', 'Low'].map(k => { const c = s.conf[k] || { n: 0, ok: 0 }; return `<div class="flex justify-between py-2 border-b border-slate-800 text-sm"><span>${k} confidence</span><span class="font-bold">${c.n ? pc(c.ok, c.n) + '%' : '-'} <span class="text-slate-400 font-normal text-xs">(${c.ok}/${c.n})</span></span></div>`; }).join('');
+  const rec = (s.recent || []).map(r => `<div class="flex items-center justify-between gap-3 py-2.5 border-b border-slate-800 text-sm"><div class="min-w-0"><div class="font-bold truncate">${esc(r.label)}</div><div class="text-[11px] text-slate-400">Pick: ${lab[r.pk] || '-'} · Result: ${r.hs}-${r.as}</div></div>${r.okR ? pill('HIT', 'bg-emerald-500/20 text-emerald-400') : pill('MISS', 'bg-red-500/20 text-red-400')}</div>`).join('');
+  return box(`<div class="grid md:grid-cols-3 gap-6"><div class="flex items-center gap-5"><div class="donut big" style="--p:${pc(s.ok, s.total)}"><span>${pc(s.ok, s.total)}%</span></div><div><div class="font-black">Result accuracy</div><div class="text-xs text-slate-400">${s.ok} of ${s.total} correct (home / draw / away)</div></div></div><div class="grid grid-cols-3 gap-2 content-center">${tile(s.total, 'Settled')}${tile(s.goals.n ? pc(s.goals.ok, s.goals.n) + '%' : '-', 'Goals line')}${tile(s.btts.n ? pc(s.btts.ok, s.btts.n) + '%' : '-', 'Both score')}</div><div>${rows}</div></div><h3 class="font-black mt-6 mb-1">Latest settled</h3>${rec}`);
+}
+function viewRecord() {
+  const { p, w, l, pe, wr } = predStats(), h = [...p].reverse().slice(0, 8);
+  const tile = (v, t, c) => `<div class="panel text-center"><div class="disp text-4xl ${c}">${v}</div><div class="text-[11px] text-slate-400 uppercase tracking-widest">${t}</div></div>`;
+  return title('Prediction Record', 'Calculated from published predictions with verified results. Void and pending picks are excluded from the win rate.') + `<div class="grid lg:grid-cols-3 gap-4"><div class="panel flex items-center gap-6"><div class="donut big" style="--p:${wr}"><span>${wr}%</span></div><div><div class="font-black">Win rate</div><div class="text-xs text-slate-400">${w} won · ${l} lost</div></div></div><div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">${tile(p.length, 'Total', '')}${tile(w, 'Won', 'text-emerald-400')}${tile(l, 'Lost', 'text-red-400')}${tile(pe, 'Pending', 'text-amber-300')}</div></div>` + (h.length ? `<h2 class="text-xl font-black mt-10 mb-4">Recent History</h2><div class="panel">${h.map(x => `<div class="flex items-center justify-between gap-3 py-3 border-b border-slate-800 text-sm"><div class="min-w-0"><div class="font-bold truncate">${esc(x.match)}</div><div class="text-[11px] text-slate-400">${esc(x.competition)} · ${esc(x.pick)}</div></div><div class="flex items-center gap-3 shrink-0"><span class="font-bold">${esc(x.score || '')}</span>${resBadge(x.result)}</div></div>`).join('')}</div>` : '') + scoreCard() + DISC;
+}
+const ta = (id, ph, v = '') => `<textarea id="${id}" rows="4" placeholder="${ph}" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm">${esc(v)}</textarea>`;
+const upBtn = id => `<label class="block text-center text-xs font-bold text-blue-400 cursor-pointer py-1">Or upload an image<input type="file" accept="image/*" class="hidden" onchange="upImg(this,'${id}')"></label>`;
+const fld = (t, k, l) => { const id = `a-${t}-${k}`, v = edv(t, k); return (['text', 'analysis', 'desc'].includes(k) ? ta(id, l, v) : inp(id, l, v)) + (k === 'image' ? upBtn(id) : ''); };
+async function upImg(el, id) {
+  const f = el.files[0]; if (!f) return;
+  try {
+    if (f.size > 12e6) throw new Error('File is larger than 12 MB');
+    const bmp = await createImageBitmap(f), k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height)), c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k); c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const dataUrl = c.toDataURL('image/webp', .85);
+    if (dataUrl.length > 3.8e6) throw new Error('Image is still too large after compression. Try a smaller picture.');
+    const r = await fetch('/api/upload', { method: 'POST', headers: hdr(), body: JSON.stringify({ dataUrl }) }), j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Upload failed');
+    $(id).value = j.url; alert('Uploaded. Press Save to keep it.');
+  } catch (e) { alert('Upload failed: ' + e.message); }
+}
+function viewAdmin() {
+  if (!S.token) return `<div class="max-w-md mx-auto p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-4"><h1 class="text-2xl font-black text-center">Admin Login</h1>${inp('adm-user', 'Username')}<input id="adm-pass" type="password" placeholder="Password" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm"><button onclick="login()" class="w-full py-3 rounded-xl bg-blue-600 font-bold text-sm">Sign in</button></div>`;
+  const row = (t, x) => { const p = t === 'predictions', d = x.published === 'false'; return `<div class="flex justify-between items-center gap-2 py-2 border-b border-slate-800 text-sm"><span class="truncate">${esc(ADM[t][2](x))} ${p ? resBadge(x.result) + (d ? ' <i class="text-slate-400">draft</i>' : '') : ''}</span><span class="flex gap-2 shrink-0 text-xs font-bold">${p ? `<button onclick="setRes(${x.id},'won')" class="text-emerald-400">Won</button><button onclick="setRes(${x.id},'lost')" class="text-orange-400">Lost</button><button onclick="setRes(${x.id},'void')" class="text-slate-400">Void</button><button onclick="pubToggle(${x.id},${d})" class="text-blue-400">${d ? 'Publish' : 'Unpublish'}</button>` : ''}<button onclick="editItem('${t}',${x.id})" class="text-blue-400">Edit</button><button onclick="delItem('${t}',${x.id})" class="text-red-400">Delete</button></span></div>`; };
+  const box = t => `<div class="panel space-y-2 max-w-3xl"><h3 class="font-black">${ADM[t][0]}${S.edit && S.edit.t === t ? ' <span class="text-xs text-blue-400">editing</span> <button onclick="S.edit=null;qr()" class="text-xs text-red-400">cancel</button>' : ''}</h3>${ADM[t][1].map(([k, l]) => fld(t, k, l)).join('')}${save(`addForm('${t}')`)}<div class="pt-3">${[...(S.content[t] || [])].reverse().map(x => row(t, x)).join('') || '<p class="text-xs text-slate-500">Empty</p>'}</div></div>`;
+  const cur = S.asec || 'overview', secs = [['overview', 'Overview'], ...Object.keys(ADM).map(k => [k, ADM[k][0]]), ['health', 'Data Sources']];
+  const side = `<nav class="flex md:flex-col gap-1 overflow-x-auto md:w-52 shrink-0">${secs.map(([k, l]) => `<button onclick="S.asec='${k}';qr()" class="tabb text-left whitespace-nowrap ${cur === k ? 'on' : ''}">${l}</button>`).join('')}</nav>`;
+  const main = cur === 'overview' ? adminTiles() + healthBox() : cur === 'health' ? healthBox() : box(cur);
+  return `<div class="flex justify-between items-center mb-4"><h1 class="disp text-4xl">Admin Desk</h1><button onclick="S.token=null;render()" class="px-4 py-2 rounded-xl bg-red-600/20 text-red-400 text-xs font-bold">Logout</button></div><div class="flex flex-col md:flex-row gap-5">${side}<div class="flex-1 min-w-0">${main}</div></div>`;
+}
+const crestImg = async u => { if (!u) return null; await cleanCrest(u); if (S.clean[u]) { try { const i = new Image(); i.src = S.clean[u]; await i.decode(); return i; } catch (e) {} } return loadImg(u); };
+const dc = (x, im, cx, cy, sz) => { if (!im) return; const r = Math.min(sz / im.naturalWidth, sz / im.naturalHeight), w = im.naturalWidth * r, h = im.naturalHeight * r; x.drawImage(im, cx - w / 2, cy - h / 2, w, h); };
+const fontsReady = () => Promise.all([document.fonts.load('italic 800 60px "Barlow Condensed"'), document.fonts.load('800 30px "Plus Jakarta Sans"')]).catch(() => {});
+const FF = '"Barlow Condensed",sans-serif', JJ = '"Plus Jakarta Sans",sans-serif';
+function shareBase(x) {
+  const W = 1080, H = 1350, g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#05123a'); g.addColorStop(.5, '#0a3a86'); g.addColorStop(1, '#06224f'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  [[[100, 0], [200, 0], [640, 800], [240, 800]], [[980, 0], [880, 0], [440, 800], [840, 800]]].forEach(pts => { const b = x.createLinearGradient(0, 0, 0, 800); b.addColorStop(0, 'rgba(255,255,255,.22)'); b.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = b; x.beginPath(); pts.forEach(([a, c], i) => i ? x.lineTo(a, c) : x.moveTo(a, c)); x.closePath(); x.fill(); });
+  let sd = 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 90; i++) { x.fillStyle = `rgba(190,220,255,${.15 + rnd() * .45})`; x.beginPath(); x.arc(rnd() * W, rnd() * 360, .8 + rnd() * 2.2, 0, 7); x.fill(); }
+  x.strokeStyle = 'rgba(255,255,255,.08)'; x.lineWidth = 3; x.strokeRect(130, 1160, 820, 130); x.beginPath(); x.moveTo(540, 1160); x.lineTo(540, 1290); x.stroke(); x.beginPath(); x.arc(540, 1225, 48, 0, 7); x.stroke();
+  const v = x.createRadialGradient(540, 675, 300, 540, 675, 900); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(2,8,28,.55)'); x.fillStyle = v; x.fillRect(0, 0, W, H);
+  x.textAlign = 'left'; x.font = `italic 800 70px ${FF}`; x.fillStyle = '#fff'; x.fillText('BRIGHT', 70, 110); const w = x.measureText('BRIGHT').width; x.fillStyle = '#4da3ff'; x.fillText('NEWS', 70 + w + 6, 110);
+  x.font = `600 20px ${JJ}`; x.fillStyle = 'rgba(255,255,255,.7)'; x.fillText('THE GAME, BEYOND THE SCORE', 72, 145);
+  x.textAlign = 'center'; x.font = `700 26px ${JJ}`; x.fillStyle = 'rgba(255,255,255,.9)'; x.fillText('@brightnewss  ·  ' + location.host, 540, 1325);
+}
+const formArr = t => [...(S.form[t.id] || [])].sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate)).slice(-5).map(z => { const home = z.homeTeam.id === t.id, h = z.score.fullTime.home, a = z.score.fullTime.away, me = home ? h : a, op = home ? a : h; return me > op ? 'W' : me < op ? 'L' : 'D'; });
+async function shareMatch() {
+  const m = S.detail; if (!m) return;
+  try {
+    await fontsReady();
+    const c = document.createElement('canvas'); c.width = 1080; c.height = 1350; const x = c.getContext('2d'); shareBase(x);
+    const k = kind(m), ft = m.score?.fullTime || {}, c1 = softc(tcol(m.homeTeam)), c2 = softc(tcol(m.awayTeam));
+    const [a, b, em] = await Promise.all([crestImg(m.homeTeam.crest), crestImg(m.awayTeam.crest), crestImg(m.competition?.emblem)]);
+    x.textAlign = 'center'; dc(x, em, 540, 190, 44);
+    x.fillStyle = '#fff'; x.font = `800 28px ${JJ}`; x.fillText(String(m.competition?.name || '').toUpperCase() + (m.matchday ? '  ·  MATCHDAY ' + m.matchday : ''), 540, 262, 940);
+    x.fillStyle = 'rgba(255,255,255,.7)'; x.font = `600 22px ${JJ}`; x.fillText([m.venue, fmtDate(m.utcDate) + ' ' + gmt(m.utcDate) + ' GMT'].filter(Boolean).join('  ·  '), 540, 300, 940);
+    [[270, c1, a, m.homeTeam], [810, c2, b, m.awayTeam]].forEach(([cx, col, im, t]) => {
+      const gr = x.createRadialGradient(cx, 520, 20, cx, 520, 270); gr.addColorStop(0, `rgba(${col},.4)`); gr.addColorStop(.6, `rgba(${col},.12)`); gr.addColorStop(1, `rgba(${col},0)`);
+      x.globalCompositeOperation = 'screen'; x.fillStyle = gr; x.beginPath(); x.arc(cx, 520, 270, 0, 7); x.fill(); x.globalCompositeOperation = 'source-over';
+      const fl = x.createRadialGradient(cx, 690, 4, cx, 690, 110); fl.addColorStop(0, `rgba(${col},.45)`); fl.addColorStop(1, `rgba(${col},0)`); x.fillStyle = fl; x.beginPath(); x.ellipse(cx, 690, 120, 18, 0, 0, 7); x.fill();
+      x.shadowColor = 'rgba(0,0,0,.5)'; x.shadowBlur = 24; x.shadowOffsetY = 14; dc(x, im, cx, 520, 280); x.shadowColor = 'transparent'; x.shadowBlur = 0; x.shadowOffsetY = 0;
+      x.fillStyle = '#fff'; x.font = `italic 800 56px ${FF}`; x.fillText(String(t.shortName || t.name).toUpperCase(), cx, 770, 430);
+    });
+    const sg = x.createLinearGradient(0, 430, 0, 560); sg.addColorStop(0, '#fff'); sg.addColorStop(1, '#9fb2d4'); x.fillStyle = sg; x.font = `italic 800 ${k === 'UP' || k === 'PP' ? 130 : 150}px ${FF}`;
+    x.fillText(k === 'UP' || k === 'PP' ? 'VS' : (ft.home ?? 0) + ' - ' + (ft.away ?? 0), 540, 535, 330);
+    const st = k === 'LIVE' ? 'LIVE ' + liveText(m) : k === 'FT' ? 'FULL TIME' : 'KICK-OFF ' + gmt(m.utcDate) + ' GMT';
+    x.fillStyle = k === 'LIVE' ? '#2a8cff' : 'rgba(255,255,255,.16)'; x.beginPath(); x.roundRect(400, 585, 280, 54, 27); x.fill(); x.fillStyle = '#fff'; x.font = `800 24px ${JJ}`; x.fillText(st, 540, 621);
+    [[270, m.homeTeam], [810, m.awayTeam]].forEach(([cx, t]) => { const f = formArr(t); if (!f.length) return; const x0 = cx - (f.length * 54 + (f.length - 1) * 10) / 2; f.forEach((r, i) => { x.fillStyle = r === 'W' ? '#16a34a' : r === 'L' ? '#dc2626' : '#64748b'; x.beginPath(); x.roundRect(x0 + i * 64, 810, 54, 54, 12); x.fill(); x.fillStyle = '#fff'; x.font = `800 26px ${JJ}`; x.fillText(r, x0 + i * 64 + 27, 847); }); });
+    if (S.sug && S.sug.available) {
+      const q = S.sug; x.fillStyle = 'rgba(255,255,255,.75)'; x.font = `700 20px ${JJ}`; x.fillText('AUTOMATED ANALYSIS', 540, 950);
+      let p0 = 90; [[q.home, `rgb(${c1})`], [q.draw, '#8fa6cc'], [q.away, `rgb(${c2})`]].forEach(([v, col]) => { const w = 900 * v / 100; x.fillStyle = col; x.fillRect(p0, 970, Math.max(0, w - 4), 24); p0 += w; });
+      x.fillStyle = '#fff'; x.font = `italic 800 70px ${FF}`; x.textAlign = 'left'; x.fillText(q.home + '%', 90, 1070); x.textAlign = 'center'; x.fillText(q.draw + '%', 540, 1070); x.textAlign = 'right'; x.fillText(q.away + '%', 990, 1070);
+      x.font = `600 20px ${JJ}`; x.fillStyle = 'rgba(255,255,255,.7)'; x.textAlign = 'left'; x.fillText(String(m.homeTeam.shortName || m.homeTeam.name) + ' win', 90, 1105, 300); x.textAlign = 'center'; x.fillText('Draw', 540, 1105); x.textAlign = 'right'; x.fillText(String(m.awayTeam.shortName || m.awayTeam.name) + ' win', 990, 1105, 300);
+    }
+    const blob = await new Promise((res, rej) => c.toBlob(z => z ? res(z) : rej(new Error('Could not create image')), 'image/png'));
+    showShare(blob, 'brightnews-match.png');
+  } catch (e) { alert('Share image failed: ' + e.message); }
+}
+async function sharePred(id) {
+  const p = S.content.predictions.find(z => String(z.id) === String(id)); if (!p) return;
+  try {
+    await fontsReady();
+    const c = document.createElement('canvas'); c.width = 1080; c.height = 1350; const x = c.getContext('2d'); shareBase(x);
+    x.textAlign = 'center'; x.fillStyle = '#fff'; x.font = `800 28px ${JJ}`; x.fillText(String(p.competition || '').toUpperCase(), 540, 240, 940);
+    x.fillStyle = 'rgba(255,255,255,.96)'; x.beginPath(); x.roundRect(70, 280, 940, 840, 36); x.fill();
+    x.fillStyle = '#0057B8'; x.font = `800 24px ${JJ}`; x.fillText('EDITORIAL PICK', 540, 345);
+    x.fillStyle = '#0b1f44'; x.font = `italic 800 92px ${FF}`; let y = txtWrap(x, String(p.match || '').toUpperCase(), 540, 450, 820, 92, 3);
+    x.fillStyle = '#5b7196'; x.font = `700 22px ${JJ}`; x.fillText('PICK', 540, y + 30);
+    x.font = `800 46px ${JJ}`; const pw = Math.min(820, x.measureText(p.pick || '').width + 80); x.fillStyle = '#0057B8'; x.beginPath(); x.roundRect(540 - pw / 2, y + 50, pw, 76, 38); x.fill(); x.fillStyle = '#fff'; x.fillText(String(p.pick || ''), 540, y + 102, 780); y += 190;
+    if (p.score) { x.fillStyle = '#0b1f44'; x.font = `italic 800 110px ${FF}`; x.fillText(String(p.score), 540, y + 70); x.fillStyle = '#5b7196'; x.font = `700 20px ${JJ}`; x.fillText('PREDICTED SCORE', 540, y + 105); y += 150; }
+    if (p.analysis) { x.fillStyle = '#44587c'; x.font = `500 28px ${JJ}`; txtWrap(x, p.analysis, 540, y + 20, 800, 40, 4); }
+    const r = String(p.result || 'pending'), col = r === 'won' ? '#16a34a' : r === 'lost' ? '#dc2626' : r === 'void' ? '#64748b' : '#d97706';
+    x.fillStyle = col; x.beginPath(); x.roundRect(380, 1030, 320, 60, 30); x.fill(); x.fillStyle = '#fff'; x.font = `800 26px ${JJ}`; x.fillText(r.toUpperCase(), 540, 1069);
+    const blob = await new Promise((res, rej) => c.toBlob(z => z ? res(z) : rej(new Error('Could not create image')), 'image/png'));
+    showShare(blob, 'brightnews-prediction.png');
+  } catch (e) { alert('Share image failed: ' + e.message); }
+}
 // ============ STANDINGS ============
 async function loadStandings() {
   S.std = null; render();
@@ -847,7 +1008,7 @@ function render() {
   ['home','matches','standings','predictions','record','kits','admin'].forEach(v => {
     $('nav-' + v).className = 'px-3 py-2 navl ' + (S.view === v ? 'on' : '');
   });
-  const V = { home: viewHome, matches: () => S.detailId ? viewDetail() : viewMatches(), standings: viewStandings, predictions: viewPredictions, record: viewRecord, kits: viewKits, admin: viewAdmin };
+  const V = { home: viewHome, matches: () => S.detailId ? viewDetail() : viewMatches(), standings: viewStandings, predictions: viewPredictions, record: viewRecord, kits: viewKits, admin: viewAdmin, article: viewArticle, team: viewTeam, page: viewPage };
   $('app').innerHTML = V[S.view]();
 }
 
