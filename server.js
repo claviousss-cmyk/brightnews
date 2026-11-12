@@ -7,7 +7,7 @@ require('dotenv').config();
 const crypto = require('crypto');
 const tokens = new Set();
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '6mb' }));
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -32,7 +32,7 @@ async function fd(apiPath, ttlMs) {
     return d;
 }
 const wrap = (fn) => async (req, res) => {
-    try { res.json(await fn(req)); }
+    try { const out = await fn(req); if (req.method === 'GET') res.set('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=120'); res.json(out); }
     catch (e) { res.status(e.status || 500).json({ error: e.message }); }
 };
 const iso = (offset) => {
@@ -70,9 +70,7 @@ app.get('/api/standings/:code', wrap((req) => {
 }));
 
 // ---------- Analisis otomatis (bukan prediksi resmi) ----------
-app.get('/api/suggest/:id', wrap(async (req) => {
-    const id = req.params.id;
-    if (!/^\d+$/.test(id)) throw Object.assign(new Error('ID salah'), { status: 400 });
+async function analyze(id) {
     const m = await fd(`/matches/${id}`, 30000);
     const H = m.homeTeam.id, A = m.awayTeam.id;
     const [std, fh, fa, h2h] = await Promise.all([
@@ -134,7 +132,7 @@ app.get('/api/suggest/:id', wrap(async (req) => {
     const btts = (th.gf >= 1.1 && ta.gf >= 1.1 && th.ga >= 1 && ta.ga >= 1) ? 'Yes' : (th.gf < 0.9 || ta.gf < 0.9) ? 'No' : 'Uncertain';
     const f1 = (x) => x.toFixed(1);
     return {
-        available: true, home, draw, away, pick, goals, btts, xg: f1(tot), sources, afAdvice,
+        available: true, home, draw, away, pick, goals, btts, xg: f1(tot), sources, afAdvice, matchId: m.id, kickoff: m.utcDate, mstatus: m.status, label: hn + ' vs ' + an, pk: ranked[0][0], ou: tot >= 2.75 ? 'O' : tot <= 2.25 ? 'U' : '-',
         confidence: gap >= 20 ? 'High' : gap >= 10 ? 'Medium' : 'Low',
         basis: [
             `Points per game (season blended with last 5): ${f1(th.ppg)} vs ${f1(ta.ppg)}`,
@@ -145,6 +143,25 @@ app.get('/api/suggest/:id', wrap(async (req) => {
             sources.length > 1 ? 'API-Football prediction model blended in (40% weight)' : 'API-Football had no data for this match, so only football-data is used'
         ]
     };
+}
+async function snap(r) {
+    if (!r || !r.available || !['TIMED', 'SCHEDULED'].includes(r.mstatus) || Date.parse(r.kickoff) < Date.now()) return;
+    if (await store.get('asnap', r.matchId)) return;
+    await store.put('asnap', r.matchId, { label: r.label, kickoff: r.kickoff, pk: r.pk, ou: r.ou, btts: r.btts, conf: r.confidence, home: r.home, draw: r.draw, away: r.away, st: 'pending' });
+}
+app.get('/api/suggest/:id', wrap(async (req) => {
+    if (!/^\d+$/.test(req.params.id)) throw Object.assign(new Error('ID salah'), { status: 400 });
+    const r = await analyze(req.params.id);
+    try { await snap(r); } catch (e) {}
+    return r;
+}));
+app.get('/api/team/:id', wrap((req) => {
+    if (!/^\d+$/.test(req.params.id)) throw Object.assign(new Error('ID salah'), { status: 400 });
+    return fd(`/teams/${req.params.id}`, 3600000);
+}));
+app.get('/api/team/:id/next', wrap((req) => {
+    if (!/^\d+$/.test(req.params.id)) throw Object.assign(new Error('ID salah'), { status: 400 });
+    return fd(`/teams/${req.params.id}/matches?status=SCHEDULED,TIMED&limit=5`, 600000);
 }));
 
 // ---------- Form tim (5 laga terakhir) ----------
@@ -259,7 +276,7 @@ const store = {
         if (!TURSO) return fileDB();
         await init();
         const o = { predictions: [], news: [], kits: [] };
-        (await sql("SELECT id, type, data FROM items WHERE type != 'fan' ORDER BY id")).forEach(([id, type, data]) => { (o[type] = o[type] || []).push({ ...JSON.parse(data), id: Number(id) }); });
+        (await sql("SELECT id, type, data FROM items WHERE type NOT IN ('fan', 'asnap') ORDER BY id")).forEach(([id, type, data]) => { (o[type] = o[type] || []).push({ ...JSON.parse(data), id: Number(id) }); });
         return o;
     },
     async add(type, item) {
@@ -290,22 +307,27 @@ store.upd = async (type, id, item) => {
     return true;
 };
 store.get = async (type, id) => {
-    if (!TURSO) return (fileDB().fan || {})[id] || null;
+    if (!TURSO) return (fileDB()['_' + type] || {})[id] || null;
     await init();
     const r = await sql('SELECT data FROM items WHERE id = ? AND type = ?', [Number(id), type]);
     return r.length ? JSON.parse(r[0][0]) : null;
 };
 store.put = async (type, id, obj) => {
-    if (!TURSO) { const d = fileDB(); d.fan = d.fan || {}; d.fan[id] = obj; return saveFile(d); }
+    if (!TURSO) { const d = fileDB(); d['_' + type] = d['_' + type] || {}; d['_' + type][id] = obj; return saveFile(d); }
     await init();
     await sql('INSERT INTO items (id, type, data) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data', [Number(id), type, JSON.stringify(obj)]);
+};
+store.list = async (type) => {
+    if (!TURSO) return Object.entries(fileDB()['_' + type] || {}).map(([id, v]) => ({ ...v, id: Number(id) }));
+    await init();
+    return (await sql('SELECT id, data FROM items WHERE type = ?', [type])).map(([id, data]) => ({ ...JSON.parse(data), id: Number(id) }));
 };
 const auth = (req, res, next) => okToken(req.headers['x-token']) ? next() : res.status(401).json({ error: 'Unauthorized' });
 const clean = (o) => Object.fromEntries(Object.entries(o || {}).slice(0, 10).map(([k, v]) => [String(k).slice(0, 30), String(v).slice(0, 4000)]));
 const guard = (fn) => async (req, res) => { try { await fn(req, res); } catch (e) { res.status(500).json({ error: e.message }); } };
 
 app.get('/api/content', guard(async (req, res) => {
-    const d = await store.all(); delete d.fan;
+    const d = await store.all(); Object.keys(d).forEach(k => (k === 'fan' || k[0] === '_') && delete d[k]);
     if (!okToken(req.headers['x-token'])) d.predictions = (d.predictions || []).filter(p => p.published !== 'false');
     res.json(d);
 }));
@@ -350,6 +372,76 @@ app.post('/api/fan/:id', guard(async (req, res) => {
     await store.put('fan', id, cur);
     res.json(cur);
 }));
+
+// ---------- Upload gambar (admin) ----------
+let imgReady;
+const initImg = () => imgReady || (imgReady = sql('CREATE TABLE IF NOT EXISTS images (id INTEGER PRIMARY KEY, mime TEXT NOT NULL, data TEXT NOT NULL)'));
+app.post('/api/upload', auth, guard(async (req, res) => {
+    const s = String((req.body && req.body.dataUrl) || ''), mm = /^data:(image\/(?:jpeg|png|webp));base64,/.exec(s.slice(0, 40));
+    const data = mm ? s.slice(mm[0].length) : '';
+    if (!mm || !data || data.length > 4000000 || !/^[A-Za-z0-9+/=]+$/.test(data)) return res.status(400).json({ error: 'Invalid or too large image' });
+    const id = Date.now();
+    if (TURSO) { await initImg(); await sql('INSERT INTO images (id, mime, data) VALUES (?, ?, ?)', [id, mm[1], data]); }
+    else { fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true }); fs.writeFileSync(path.join(__dirname, 'data', 'img-' + id + '.json'), JSON.stringify({ mime: mm[1], data })); }
+    res.json({ url: '/api/img/' + id });
+}));
+app.get('/api/img/:id', guard(async (req, res) => {
+    if (!/^\d+$/.test(req.params.id)) return res.status(400).end();
+    let r = null;
+    if (TURSO) { await initImg(); const q = await sql('SELECT mime, data FROM images WHERE id = ?', [Number(req.params.id)]); if (q.length) r = { mime: q[0][0], data: q[0][1] }; }
+    else { const f = path.join(__dirname, 'data', 'img-' + req.params.id + '.json'); if (fs.existsSync(f)) r = JSON.parse(fs.readFileSync(f, 'utf8')); }
+    if (!r) return res.status(404).end();
+    res.set('Content-Type', r.mime).set('Cache-Control', 'public, max-age=31536000, immutable').send(Buffer.from(r.data, 'base64'));
+}));
+
+// ---------- Scorecard analisis otomatis ----------
+app.get('/api/scorecard', guard(async (req, res) => {
+    try {
+        const d = await fd(`/matches?dateFrom=${iso(-2)}&dateTo=${iso(4)}`, 60000);
+        const have = new Set((await store.list('asnap')).map(r => String(r.id)));
+        const up = (d.matches || []).filter(m => ['TIMED', 'SCHEDULED'].includes(m.status) && !have.has(String(m.id)) && Date.parse(m.utcDate) > Date.now() && Date.parse(m.utcDate) - Date.now() < 36 * 3600e3).slice(0, 2);
+        for (const m of up) { try { await snap(await analyze(m.id)); } catch (e) {} }
+    } catch (e) {}
+    const rows = await store.list('asnap');
+    let budget = 4;
+    for (const r of rows) {
+        if (r.st !== 'pending' || budget <= 0 || Date.parse(r.kickoff) > Date.now() - 3 * 3600e3) continue;
+        try {
+            const m = await fd(`/matches/${r.id}`, 600000); budget--;
+            if (m.status === 'FINISHED') {
+                const h = m.score.fullTime.home, a = m.score.fullTime.away, act = h > a ? 'H' : h < a ? 'A' : 'D';
+                Object.assign(r, { st: 'done', act, hs: h, as: a, okR: r.pk === act, okG: r.ou === '-' ? null : (r.ou === 'O') === (h + a > 2.5), okB: r.btts === 'Uncertain' ? null : (r.btts === 'Yes') === (h > 0 && a > 0) });
+                const { id, ...rest } = r; await store.put('asnap', id, rest);
+            }
+        } catch (e) {}
+    }
+    const done = rows.filter(r => r.st === 'done'), ok = done.filter(r => r.okR).length, conf = {};
+    ['High', 'Medium', 'Low'].forEach(c => { const x = done.filter(r => r.conf === c); conf[c] = { n: x.length, ok: x.filter(r => r.okR).length }; });
+    const g = done.filter(r => r.okG === true || r.okG === false), b = done.filter(r => r.okB === true || r.okB === false);
+    res.set('Cache-Control', 'public, s-maxage=300').json({ total: done.length, ok, pending: rows.length - done.length, conf, goals: { n: g.length, ok: g.filter(r => r.okG).length }, btts: { n: b.length, ok: b.filter(r => r.okB).length }, recent: done.sort((p, q) => q.id - p.id).slice(0, 10).map(r => ({ label: r.label, pk: r.pk, act: r.act, hs: r.hs, as: r.as, okR: r.okR })) });
+}));
+
+// ---------- Link share dengan preview (WhatsApp, Instagram, X) ----------
+app.get('/share/:type/:id', async (req, res) => {
+    const { type, id } = req.params, base = 'https://' + (req.headers['x-forwarded-host'] || req.headers.host || '');
+    let title = 'BRIGHTNEWS - THE GAME, BEYOND THE SCORE', desc = 'Live scores, match analysis, predictions and football culture.', go = '/';
+    try {
+        if (type === 'match' && /^\d+$/.test(id)) {
+            const m = await fd(`/matches/${id}`, 30000);
+            title = `${m.homeTeam.name} vs ${m.awayTeam.name} - ${m.competition.name} | BRIGHTNEWS`;
+            desc = m.status === 'FINISHED' ? `Final score ${m.score.fullTime.home}-${m.score.fullTime.away}. Stats, events and analysis on BRIGHTNEWS.` : `Kick-off ${m.utcDate.slice(0, 16).replace('T', ' ')} GMT. Form, head to head and automated analysis on BRIGHTNEWS.`;
+            go = '/#/match/' + id;
+        } else if (type === 'news' && /^\d+$/.test(id)) {
+            const n = ((await store.all()).news || []).find(x => String(x.id) === id);
+            if (n) { title = n.title + ' | BRIGHTNEWS'; desc = String(n.text || '').slice(0, 160); go = '/#/news/' + id; }
+        } else if (type === 'team' && /^\d+$/.test(id)) {
+            const tm = await fd(`/teams/${id}`, 3600000);
+            title = `${tm.name} - fixtures, results and squad | BRIGHTNEWS`; desc = `Latest fixtures, form and squad for ${tm.name}.`; go = '/#/team/' + id;
+        }
+    } catch (e) {}
+    const e = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    res.set('Content-Type', 'text/html; charset=utf-8').set('Cache-Control', 'public, s-maxage=300').send(`<!doctype html><html><head><meta charset="utf-8"><title>${e(title)}</title><meta name="description" content="${e(desc)}"><meta property="og:title" content="${e(title)}"><meta property="og:description" content="${e(desc)}"><meta property="og:type" content="website"><meta property="og:image" content="${base}/og.png"><meta name="twitter:card" content="summary_large_image"><meta http-equiv="refresh" content="0;url=${go}"></head><body><script>location.replace(${JSON.stringify(go)})</script></body></html>`);
+});
 
 // Cek kesehatan semua sumber data (hanya admin)
 app.get('/api/health', auth, guard(async (req, res) => {
