@@ -236,7 +236,7 @@ app.get('/api/scorers/:code', wrap((req) => {
 }));
 
 // ---------- Konten admin (butuh login) ----------
-const TYPES = ['predictions', 'news', 'kits', 'featured', 'takes', 'transfers', 'players', 'facts'];
+const TYPES = ['predictions', 'news', 'kits', 'featured', 'takes', 'transfers', 'players', 'facts', 'hero', 'backdrops'];
 const TURSO = !!(process.env.TURSO_URL && process.env.TURSO_TOKEN);
 async function sql(q, args = []) {
     const base = process.env.TURSO_URL.replace(/^libsql:/, 'https:').replace(/\/$/, '');
