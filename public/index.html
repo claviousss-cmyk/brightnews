@@ -174,6 +174,12 @@ html.night body::after{opacity:.28}
 .sheen::after{animation:none}.sheen:hover::after{animation:sheen 1s}
 button:hover{transform:none}button:active{transform:scale(.97)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+.aura{position:absolute;left:50%;top:42%;width:min(340px,92%);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(var(--c),.3),rgba(var(--c),.1) 55%,transparent 72%);filter:blur(5px);mix-blend-mode:screen;pointer-events:none}
+.aura::after{content:"";position:absolute;inset:16%;border-radius:50%;border:1px solid rgba(var(--c),.25)}
+.crest-floor{position:absolute;left:50%;bottom:-12px;width:64%;height:12px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(var(--c),.5),transparent);filter:blur(5px)}
+.arena .disp{text-shadow:0 2px 14px rgba(0,0,0,.75)}
+.split-line{opacity:.4}
 </style>
 
 <title>BRIGHTNEWS — THE GAME, BEYOND THE SCORE</title>
@@ -202,7 +208,7 @@ let S = { q:'', fq:0, league:'ALL', h2h:null, pos:null, view:'home', filter:'ALL
 const kind = m => ['IN_PLAY','PAUSED'].includes(m.status) ? 'LIVE' : m.status === 'FINISHED' ? 'FT' : (['POSTPONED','CANCELLED','SUSPENDED','AWARDED'].includes(m.status) || Date.parse(m.utcDate) < Date.now() - 3 * 3600e3) ? 'PP' : 'UP';
 const fmtTime = d => new Date(d).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 const fmtDate = d => new Date(d).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' });
-const crest = u => u ? `<img src="${esc(u)}" class="w-7 h-7 object-contain" alt="">` : '<span class="w-7 h-7"></span>';
+const crest = u => u ? ci(u, 'w-7 h-7 object-contain') : '<span class="w-7 h-7"></span>';
 
 async function api(url) {
   const r = await fetch(url, S.token ? { headers: { 'x-token': S.token } } : undefined);
@@ -488,7 +494,7 @@ function healthBox() {
     <div><p class="text-[10px] font-bold tracking-widest text-blue-400 mb-1">DATABASE</p>${ln('Storage', h.database)}</div></div>`;
   return `<div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 mb-4"><div class="flex justify-between items-center"><h3 class="font-black">Data Sources</h3><span class="flex gap-2"><button onclick="exportBackup()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-bold">Export backup</button><button onclick="loadHealth()" class="px-3 py-1.5 rounded-lg bg-blue-600 text-xs font-bold">Run check</button></span></div>${body}</div>`;
 }
-const loadImg = async src => { if (!src) return null; try { const r = await fetch('/api/crest?u=' + encodeURIComponent(src)); if (!r.ok) return null; const i = new Image(); i.src = URL.createObjectURL(await r.blob()); await i.decode(); return i; } catch (e) { return null; } };
+const loadImg = async src => { if (!src) return null; for (const u of [...new Set([hd(src), src])]) { try { const r = await fetch('/api/crest?u=' + encodeURIComponent(u)); if (!r.ok) continue; const i = new Image(); i.src = URL.createObjectURL(await r.blob()); await i.decode(); if (i.naturalWidth > 0) return i; } catch (e) {} } return null; };
 function txtWrap(x, t, cx, y, mw, lh, ml) {
   let l = '', n = 0;
   for (const k of String(t || '').split(' ')) { const tt = l ? l + ' ' + k : k; if (x.measureText(tt).width > mw && l) { x.fillText(l, cx, y); y += lh; l = k; if (++n >= ml) return y; } else l = tt; }
@@ -624,7 +630,7 @@ setInterval(() => { const n = document.querySelectorAll('.hs').length; if (n > 1
 S.pf = 'all';
 const IC = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8">${d}</svg>`;
 const goSec = id => { const e = document.getElementById(id); if (e) e.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
-const crestL = u => u ? `<img src="${esc(u)}" class="w-10 h-10 object-contain mx-auto" alt="">` : '';
+const crestL = u => u ? ci(u, 'w-10 h-10 object-contain mx-auto') : '';
 const bdImg = () => { const b = img(last(S.content.backdrops)?.image); return b ? `<img src="${esc(b)}" alt="" class="absolute inset-0 w-full h-full object-cover opacity-40">` : ''; };
 const mrow = m => { const k = kind(m), sc = m.score?.fullTime || {}, t = (x, r) => `<div class="flex items-center gap-2 ${r ? 'flex-row-reverse text-right' : ''} min-w-0">${crest(x.crest)}<span class="text-xs font-bold truncate">${nmT(x)}</span></div>`; return `<a href="#/match/${m.id}" class="mc"><div class="flex justify-between text-[10px] font-bold text-slate-400 mb-3"><span class="truncate pr-2">${esc(m.competition?.name)}</span>${k === 'LIVE' ? `<span class="livebadge text-red-400">${minuteOf(m)}</span>` : `<span>${k === 'FT' ? 'FT' : gmt(m.utcDate) + ' GMT'}</span>`}</div><div class="flex items-center justify-between gap-2">${t(m.homeTeam)}<div class="disp text-2xl px-1 shrink-0">${k === 'UP' || k === 'PP' ? 'VS' : (sc.home ?? 0) + ' - ' + (sc.away ?? 0)}</div>${t(m.awayTeam, 1)}</div></a>`; };
 const ucard = m => `<a href="#/match/${m.id}" class="mc shrink-0 w-60"><div class="flex justify-between text-[10px] font-bold text-slate-400"><span class="truncate pr-2">${esc(m.competition?.name)}</span><span>${fmtDate(m.utcDate)}</span></div><div class="flex items-center justify-center gap-3 my-3"><div class="w-20 text-center">${crestL(m.homeTeam.crest)}<div class="text-[11px] font-bold mt-1 truncate">${nmT(m.homeTeam)}</div></div><span class="disp text-lg">VS</span><div class="w-20 text-center">${crestL(m.awayTeam.crest)}<div class="text-[11px] font-bold mt-1 truncate">${nmT(m.awayTeam)}</div></div></div><div class="text-center text-xs font-bold text-blue-400">${gmt(m.utcDate)} GMT</div></a>`;
@@ -750,11 +756,11 @@ async function teamColor(t) {
 }
 async function loadColors(m) { if (!m) return; await Promise.all([teamColor(m.homeTeam), teamColor(m.awayTeam)]); if (S.detailId === m.id) qr(); }
 function heroBoard(m, k, ft, ht, sp) {
-  const c1 = tcol(m.homeTeam), c2 = tcol(m.awayTeam), bd = img(last(S.content.backdrops)?.image);
-  const half = (t, c) => `<div class="flex-1 min-w-0 relative flex flex-col items-center justify-center py-6"><div class="aura" style="background:radial-gradient(closest-side,rgba(${c},.75),rgba(${c},.25) 55%,transparent 75%)"></div><img src="${esc(t.crest)}" alt="" class="relative crest-in w-28 h-28 sm:w-44 sm:h-44 object-contain" style="filter:drop-shadow(0 0 22px rgba(${c},.9))"><div class="relative disp text-xl sm:text-3xl mt-3 text-center max-w-full truncate">${esc(t.shortName || t.name)}</div></div>`;
+  const c1 = softc(tcol(m.homeTeam)), c2 = softc(tcol(m.awayTeam)), bd = img(last(S.content.backdrops)?.image);
+  const half = (t, c) => `<div class="flex-1 min-w-0 relative flex flex-col items-center justify-center py-8"><div class="aura" style="--c:${c}"></div><div class="relative">${ci(t.crest, 'crest-in w-28 h-28 sm:w-44 sm:h-44 object-contain', 'filter:drop-shadow(0 12px 16px rgba(0,0,0,.55)) drop-shadow(0 0 8px rgba(' + c + ',.3))')}<span class="crest-floor" style="--c:${c}"></span></div><div class="relative disp text-xl sm:text-3xl mt-5 text-center max-w-full truncate">${esc(t.shortName || t.name)}</div></div>`;
   const mid = k === 'UP' || k === 'PP' ? '<div class="vs-big disp">VS</div>' : `<div class="score disp">${ft.home ?? 0}<span style="opacity:.6"> - </span>${ft.away ?? 0}</div>`;
   return `<section class="arena relative overflow-hidden rounded-3xl text-white">${bd ? `<img src="${esc(bd)}" alt="" class="absolute inset-0 w-full h-full object-cover" style="opacity:.8">` : ''}
-    <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(${c1},.45),transparent 50%,rgba(${c2},.45)),linear-gradient(180deg,rgba(4,11,31,.35),rgba(4,11,31,.7))"></div><div class="split-line"></div>
+    <div class="absolute inset-0" style="background:radial-gradient(60% 90% at 0% 100%,rgba(${c1},.2),transparent 70%),radial-gradient(60% 90% at 100% 100%,rgba(${c2},.2),transparent 70%),radial-gradient(ellipse at center,transparent 35%,rgba(4,11,31,.55)),linear-gradient(180deg,rgba(4,11,31,.4),rgba(4,11,31,.78))"></div><div class="split-line"></div>
     <div class="relative px-4 sm:px-10 pt-6 pb-8"><div class="text-center text-xs font-bold tracking-widest uppercase opacity-90">${esc(m.competition?.name)}${m.matchday ? ' · Matchday ' + m.matchday : ''}</div>${m.venue ? `<div class="text-center text-[11px] opacity-70 mt-1">${esc(m.venue)} · ${fmtDate(m.utcDate)} · ${gmt(m.utcDate)} GMT</div>` : ''}
     <div class="flex items-center mt-4">${half(m.homeTeam, c1)}<div class="text-center px-1 sm:px-6 shrink-0 relative z-[2]">${mid}<div class="mt-3">${sp}</div>${ht.home != null && k !== 'UP' ? `<div class="text-xs mt-2 opacity-70">(${ht.home} - ${ht.away})</div>` : ''}</div>${half(m.awayTeam, c2)}</div></div></section>`;
 }
@@ -767,7 +773,7 @@ function formChips2(t) {
 }
 function formStrip(m) {
   const a = S.sug && S.sug.available ? S.sug : null, nm = t => esc(t.shortName || t.name);
-  const col = (t, pc, r) => `<div class="flex-1 min-w-0 flex flex-col gap-4 ${r ? 'items-end text-right' : ''}">${formChips2(t)}<div class="flex items-center gap-3 ${r ? 'flex-row-reverse' : ''}"><img src="${esc(t.crest)}" class="w-12 h-12 sm:w-16 sm:h-16 object-contain" alt=""><div><div class="disp text-4xl sm:text-6xl leading-none">${a ? pc + '%' : '–'}</div><div class="text-xs sm:text-sm text-slate-400 truncate">${nm(t)} Win</div></div></div></div>`;
+  const col = (t, pc, r) => `<div class="flex-1 min-w-0 flex flex-col gap-4 ${r ? 'items-end text-right' : ''}">${formChips2(t)}<div class="flex items-center gap-3 ${r ? 'flex-row-reverse' : ''}">${ci(t.crest, 'w-12 h-12 sm:w-16 sm:h-16 object-contain')}<div><div class="disp text-4xl sm:text-6xl leading-none">${a ? pc + '%' : '–'}</div><div class="text-xs sm:text-sm text-slate-400 truncate">${nm(t)} Win</div></div></div></div>`;
   return `<div class="panel mt-4"><div class="flex gap-3 items-end">${col(m.homeTeam, a && a.home)}<div class="text-center px-2 shrink-0"><div class="disp text-4xl sm:text-6xl leading-none">${a ? a.draw + '%' : '–'}</div><div class="text-xs sm:text-sm text-slate-400">Draw</div></div>${col(m.awayTeam, a && a.away, 1)}</div>${a ? '<p class="text-[11px] text-slate-500 mt-4">Automated analysis from form, standings and head to head' + ((a.sources || []).length > 1 ? ' + API-Football' : '') + '. Not a published prediction.</p>' : ''}</div>`;
 }
 
@@ -797,6 +803,10 @@ function viewMatches() {
   else body = groupList(list);
   return `<div class="flex items-end justify-between gap-3 flex-wrap"><h1 class="disp text-5xl sm:text-6xl leading-none">Matches</h1><p class="text-xs text-slate-400">Kick-off times in GMT · updates every minute</p></div>${dayChips()}<input id="q" value="${esc(S.q)}" oninput="S.q=this.value;S.fq=1;qr()" placeholder="Search teams..." class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-sm mt-3"><div class="flex flex-wrap gap-2 mt-3">${chips}</div>${lchips ? `<div class="flex flex-wrap gap-2 mt-2">${lchips}</div>` : ''}${body}`;
 }
+const hd = u => (u && u.includes('crests.football-data.org') && /\.png(\?.*)?$/i.test(u)) ? u.replace(/\.png/i, '.svg') : u;
+const ci = (u, cls, style = '') => `<img src="${esc(hd(u))}" data-o="${esc(u)}" onerror="crestFb(this)" class="${cls}" style="${style}" alt="" decoding="async">`;
+function crestFb(el) { if (el.dataset.f) return; el.dataset.f = 1; el.src = el.dataset.o; }
+const softc = c => c.split(',').map(Number).every(x => x > 195) ? '150,185,235' : c;
 // ============ STANDINGS ============
 async function loadStandings() {
   S.std = null; render();
